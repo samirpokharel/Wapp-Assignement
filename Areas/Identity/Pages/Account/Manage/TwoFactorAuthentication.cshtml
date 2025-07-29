@@ -1,0 +1,118 @@
+﻿@page
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "Two-factor authentication";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="border-b border-white/10 pb-6">
+        <h2 class="text-2xl font-bold text-white mb-2">Two-Factor Authentication</h2>
+        <p class="text-gray-300">Manage your two-factor authentication settings</p>
+    </div>
+
+    <!-- Status Message -->
+    <partial name="_StatusMessage" for="StatusMessage" />
+
+    <!-- Two-Factor Status -->
+    @if (Model.Is2faEnabled)
+    {
+        if (Model.RecoveryCodesLeft == 0)
+        {
+            <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-6">
+                <div class="flex items-start">
+                    <svg class="w-6 h-6 text-red-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white mb-2">No Recovery Codes Left</h3>
+                        <p class="text-gray-300 mb-4">
+                            You must <a asp-page="./GenerateRecoveryCodes" class="text-indigo-400 hover:text-indigo-300">generate a new set of recovery codes</a> before you can log in with a recovery code.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.RecoveryCodesLeft == 1)
+        {
+            <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6">
+                <div class="flex items-start">
+                    <svg class="w-6 h-6 text-yellow-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white mb-2">1 Recovery Code Left</h3>
+                        <p class="text-gray-300 mb-4">
+                            You have 1 recovery code left. You can <a asp-page="./GenerateRecoveryCodes" class="text-indigo-400 hover:text-indigo-300">generate a new set of recovery codes</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.RecoveryCodesLeft <= 3)
+        {
+            <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6">
+                <div class="flex items-start">
+                    <svg class="w-6 h-6 text-yellow-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white mb-2">@Model.RecoveryCodesLeft Recovery Codes Left</h3>
+                        <p class="text-gray-300 mb-4">
+                            You have @Model.RecoveryCodesLeft recovery codes left. You can <a asp-page="./GenerateRecoveryCodes" class="text-indigo-400 hover:text-indigo-300">generate a new set of recovery codes</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/10">
+            <a asp-page="./Disable2fa" class="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white font-semibold rounded-lg hover:from-red-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+                </svg>
+                Disable 2FA
+            </a>
+            
+            <a asp-page="./GenerateRecoveryCodes" class="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                Reset Recovery Codes
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
+            <div class="flex items-start">
+                <svg class="w-6 h-6 text-blue-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Two-Factor Authentication Not Enabled</h3>
+                    <p class="text-gray-300 mb-4">
+                        Two-factor authentication adds an extra layer of security to your account. 
+                        When enabled, you will be prompted for a code in addition to your password when signing in.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enable 2FA Button -->
+        <div class="pt-6 border-t border-white/10">
+            <a asp-page="./EnableAuthenticator" class="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+                Enable Two-Factor Authentication
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

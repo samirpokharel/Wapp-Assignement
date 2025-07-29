@@ -1,46 +1,215 @@
 @model SimpleLMS.Models.ViewModels.DashboardViewModel
-
 @{
     ViewData["Title"] = "Dashboard";
-    // IMPORTANT: Tell Razor to use our new Dashboard layout file
-    Layout = "_DashboardLayout";
 }
 
-<!-- Page Title -->
-<div class="mb-8 animate-slide-in-right">
-    <h2 class="text-4xl font-bold text-white mb-2 flex items-center">Available Courses</h2>
-    <p class="text-gray-300 text-lg">Explore our comprehensive learning library</p>
-</div>
-
-<!-- Courses Grid -->
-<div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-    @if (!Model.Courses.Any())
-    {
-        <!-- Empty State -->
-        <div class="md:col-span-2 xl:col-span-3 text-center py-12 animate-slide-up">
-            <div class="bg-white/5 backdrop-blur-xl rounded-3xl p-12 border border-white/10 shadow-2xl">
-                <h3 class="text-2xl font-bold text-white mb-4">No Courses Available Yet</h3>
-                <p class="text-gray-300 text-lg">Create a new course in the 'Courses' section to see it here!</p>
+<div class="min-h-screen px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <!-- Welcome Header -->
+        <div class="mb-8">
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold text-xl">@Model.UserInitials</span>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Welcome back, @Model.UserName!</h1>
+                    <p class="text-gray-300">Continue your learning journey</p>
+                </div>
             </div>
         </div>
-    }
-    else
-    {
-        @for (int i = 0; i < Model.Courses.Count; i++)
-        {
-            var course = Model.Courses[i];
-            <div class="group bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl hover:shadow-indigo-500/25 transition-all duration-300 transform hover:scale-105 animate-slide-up" style="animation-delay: @(i * 0.1)s;">
-                <h3 class="text-xl font-bold text-white mb-3 group-hover:text-indigo-300 transition-colors duration-300">
-                    @course.Title
-                </h3>
-                <p class="text-gray-300 leading-relaxed line-clamp-3">
-                    @course.Description
-                </p>
-                 <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" 
-                   class="mt-6 block w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl text-white font-semibold text-center shadow-lg hover:shadow-purple-500/25 transform transition-all duration-300 group-hover:scale-105">
-                    Explore Course
-                </a>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-400">Total Enrolled</p>
+                        <p class="text-2xl font-bold text-white">@Model.TotalEnrolled</p>
+                    </div>
+                </div>
             </div>
-        }
-    }
+
+            <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-400">Completed</p>
+                        <p class="text-2xl font-bold text-white">@Model.CompletedCourses</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-400">In Progress</p>
+                        <p class="text-2xl font-bold text-white">@Model.InProgressCourses</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-400">Completion Rate</p>
+                        <p class="text-2xl font-bold text-white">@Model.CompletionRate.ToString("F0")%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Enrolled Courses -->
+            <div class="lg:col-span-2">
+                <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-white">My Courses</h2>
+                        <a asp-controller="Courses" asp-action="Index" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">
+                            View All Courses →
+                        </a>
+                    </div>
+
+                    @if (Model.EnrolledCourses.Any())
+                    {
+                        <div class="space-y-4">
+                            @foreach (var enrollment in Model.EnrolledCourses)
+                            {
+                                <div class="bg-white/5 rounded-xl p-4 border border-white/10 hover:border-indigo-500/30 transition-all duration-300">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-semibold text-white mb-1">@enrollment.Course.Title</h3>
+                                            <p class="text-gray-300 text-sm mb-2">@enrollment.Course.Instructor • @enrollment.Course.Duration hours</p>
+                                            <div class="flex items-center space-x-4 text-sm">
+                                                <span class="text-gray-400">Enrolled: @enrollment.EnrolledAt.ToString("MMM dd, yyyy")</span>
+                                                @if (enrollment.IsCompleted)
+                                                {
+                                                    <span class="text-green-400 font-medium">✓ Completed</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-yellow-400 font-medium">In Progress</span>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            @if (enrollment.IsCompleted)
+                                            {
+                                                <a asp-controller="Courses" asp-action="Details" asp-route-id="@enrollment.CourseId" 
+                                                   class="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors duration-300">
+                                                    Review
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-controller="Courses" asp-action="Learn" asp-route-id="@enrollment.CourseId" 
+                                                   class="px-4 py-2 bg-indigo-500/20 text-indigo-400 rounded-lg hover:bg-indigo-500/30 transition-colors duration-300">
+                                                    Continue
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-2">No Courses Enrolled</h3>
+                            <p class="text-gray-400 mb-4">Start your learning journey by enrolling in courses</p>
+                            <a asp-controller="Courses" asp-action="Index" 
+                               class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
+                                Browse Courses
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Recommended Courses -->
+                @if (Model.RecommendedCourses.Any())
+                {
+                    <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+                        <h3 class="text-lg font-bold text-white mb-4">Recommended for You</h3>
+                        <div class="space-y-4">
+                            @foreach (var course in Model.RecommendedCourses)
+                            {
+                                <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                                    <h4 class="font-semibold text-white mb-2">@course.Title</h4>
+                                    <p class="text-gray-300 text-sm mb-3">@course.Description.Substring(0, Math.Min(60, course.Description.Length))...</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-400">@course.Instructor</span>
+                                        <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" 
+                                           class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">
+                                            View →
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Quick Actions -->
+                <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+                    <h3 class="text-lg font-bold text-white mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <a asp-controller="Courses" asp-action="Index" 
+                           class="flex items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors duration-300">
+                            <svg class="w-5 h-5 text-indigo-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            <span class="text-white">Browse All Courses</span>
+                        </a>
+                        
+                        <a asp-area="Identity" asp-page="/Account/Manage" 
+                           class="flex items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors duration-300">
+                            <svg class="w-5 h-5 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span class="text-white">Account Settings</span>
+                        </a>
+                        
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="Admin" asp-action="Index" 
+                               class="flex items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors duration-300">
+                                <svg class="w-5 h-5 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                <span class="text-white">Admin Panel</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

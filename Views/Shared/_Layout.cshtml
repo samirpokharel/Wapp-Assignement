@@ -54,26 +54,49 @@
     <header>
         <nav class="relative z-10 p-6">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <!-- Logo -->
                 <a asp-controller="Home" asp-action="Index" class="text-white text-xl font-bold">
                     <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent text-2xl">EasyLearn</span>
                 </a>
+                
+                <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <!-- These links now use ASP.NET Tag Helpers to navigate correctly -->
                     <a asp-controller="Home" asp-action="Index" class="text-gray-300 hover:text-white transition-colors duration-300">Home</a>
                     <a asp-controller="Courses" asp-action="Index" class="text-gray-300 hover:text-white transition-colors duration-300">Courses</a>
-
-                 
+                    
                     @if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a class="text-gray-300 hover:text-white transition-colors duration-300" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-    </li>
-}
-<partial name="_LoginPartial" />
+                    {
+                        <a asp-controller="Dashboard" asp-action="Index" class="text-gray-300 hover:text-white transition-colors duration-300">Dashboard</a>
+                        <a asp-controller="Admin" asp-action="Index" class="text-gray-300 hover:text-white transition-colors duration-300">Admin</a>
+                    }
+                    
+                    <partial name="_LoginPartial" />
                 </div>
-                <button class="md:hidden text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-white" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
                 </button>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div class="md:hidden hidden" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1 bg-white/5 backdrop-blur-lg rounded-lg mt-4 border border-white/10">
+                    <a asp-controller="Home" asp-action="Index" class="block px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-md transition-colors duration-300">Home</a>
+                    <a asp-controller="Courses" asp-action="Index" class="block px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-md transition-colors duration-300">Courses</a>
+                    
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <a asp-controller="Dashboard" asp-action="Index" class="block px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-md transition-colors duration-300">Dashboard</a>
+                        <a asp-controller="Admin" asp-action="Index" class="block px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-md transition-colors duration-300">Admin</a>
+                    }
+                    
+                    <div class="px-3 py-2">
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
@@ -93,6 +116,20 @@
 
     <!-- Your custom JavaScript file -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- Mobile Menu JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
     
     <!-- A section for page-specific scripts -->
     @await RenderSectionAsync("Scripts", required: false)

@@ -5,13 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SimpleLMS.Models;
 
-public enum ProgressStatus
-{
-    Incomplete = 0,
-    InProgress = 1,
-    Completed = 2
-}
-
 public class Progress
 {
     public int Id { get; set; }

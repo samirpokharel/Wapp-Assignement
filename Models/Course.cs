@@ -20,6 +20,21 @@ public class Course
     [Display(Name = "Content Path")]
     public string ContentPath { get; set; } = string.Empty;
     
+    // Content type and actual content
+    [Display(Name = "Content Type")]
+    public ContentType ContentType { get; set; } = ContentType.Text;
+    
+    [Display(Name = "Course Content")]
+    public string Content { get; set; } = string.Empty; // For text content
+    
+    [StringLength(500)]
+    [Display(Name = "Video URL")]
+    public string? VideoUrl { get; set; } // For video content
+    
+    [StringLength(500)]
+    [Display(Name = "PDF File Path")]
+    public string? PdfFilePath { get; set; } // For PDF content
+    
     // Additional properties that might be needed
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     

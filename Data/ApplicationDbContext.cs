@@ -15,4 +15,7 @@ public class ApplicationDbContext : IdentityDbContext
 
     // Add this new DbSet for the Progress table
     public DbSet<Progress> Progresses { get; set; }
+    
+    // Add this new DbSet for the Enrollment table
+    public DbSet<Enrollment> Enrollments { get; set; }
 }

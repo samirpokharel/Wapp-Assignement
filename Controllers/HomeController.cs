@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using SimpleLMS.Models;
 
 namespace SimpleLMS.Controllers;
@@ -7,14 +8,22 @@ namespace SimpleLMS.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly SignInManager<IdentityUser> _signInManager;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, SignInManager<IdentityUser> signInManager)
     {
         _logger = logger;
+        _signInManager = signInManager;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        // If user is signed in, redirect to dashboard
+        if (_signInManager.IsSignedIn(User))
+        {
+            return RedirectToAction("Index", "Dashboard");
+        }
+        
         return View();
     }
 

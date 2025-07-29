@@ -1,0 +1,163 @@
+@model SimpleLMS.Models.Course
+
+@{
+    ViewData["Title"] = "Create Course";
+}
+
+<div class="min-h-screen px-6 py-12">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-white mb-4">Create New Course</h1>
+            <p class="text-gray-300">Add a new course to your learning platform</p>
+        </div>
+
+        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+            <form asp-action="Create" method="post">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Basic Information -->
+                    <div class="md:col-span-2">
+                        <h3 class="text-xl font-semibold text-white mb-4">Basic Information</h3>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="Title" class="block text-sm font-medium text-gray-300 mb-2">Course Title</label>
+                        <input asp-for="Title" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter course title" />
+                        <span asp-validation-for="Title" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="Description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                        <textarea asp-for="Description" rows="4" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter course description"></textarea>
+                        <span asp-validation-for="Description" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Instructor" class="block text-sm font-medium text-gray-300 mb-2">Instructor</label>
+                        <input asp-for="Instructor" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter instructor name" />
+                        <span asp-validation-for="Instructor" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Duration" class="block text-sm font-medium text-gray-300 mb-2">Duration (hours)</label>
+                        <input asp-for="Duration" type="number" min="1" max="100" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter duration in hours" />
+                        <span asp-validation-for="Duration" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Level" class="block text-sm font-medium text-gray-300 mb-2">Level</label>
+                        <select asp-for="Level" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                        <span asp-validation-for="Level" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Price" class="block text-sm font-medium text-gray-300 mb-2">Price</label>
+                        <input asp-for="Price" type="number" step="0.01" min="0" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter price (0 for free)" />
+                        <span asp-validation-for="Price" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="ImageUrl" class="block text-sm font-medium text-gray-300 mb-2">Image URL</label>
+                        <input asp-for="ImageUrl" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter image URL (optional)" />
+                        <span asp-validation-for="ImageUrl" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="ContentPath" class="block text-sm font-medium text-gray-300 mb-2">Content Path</label>
+                        <input asp-for="ContentPath" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter content path" />
+                        <span asp-validation-for="ContentPath" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <!-- Content Type and Content -->
+                    <div class="md:col-span-2">
+                        <h3 class="text-xl font-semibold text-white mb-4">Course Content</h3>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="ContentType" class="block text-sm font-medium text-gray-300 mb-2">Content Type</label>
+                        <select asp-for="ContentType" id="contentType" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="@ContentType.Text">Text</option>
+                            <option value="@ContentType.PDF">PDF</option>
+                            <option value="@ContentType.Video">Video</option>
+                        </select>
+                        <span asp-validation-for="ContentType" class="text-red-400 text-sm"></span>
+                    </div>
+
+                    <!-- Text Content -->
+                    <div id="textContent" class="md:col-span-2">
+                        <label asp-for="Content" class="block text-sm font-medium text-gray-300 mb-2">Course Content (Markdown)</label>
+                        <textarea asp-for="Content" rows="10" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter course content in Markdown format"></textarea>
+                        <span asp-validation-for="Content" class="text-red-400 text-sm"></span>
+                        <p class="text-sm text-gray-400 mt-2">Use Markdown formatting for rich text content</p>
+                    </div>
+
+                    <!-- Video Content -->
+                    <div id="videoContent" class="md:col-span-2" style="display: none;">
+                        <label asp-for="VideoUrl" class="block text-sm font-medium text-gray-300 mb-2">Video URL</label>
+                        <input asp-for="VideoUrl" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter YouTube or video URL" />
+                        <span asp-validation-for="VideoUrl" class="text-red-400 text-sm"></span>
+                        <p class="text-sm text-gray-400 mt-2">Enter a YouTube embed URL or direct video link</p>
+                    </div>
+
+                    <!-- PDF Content -->
+                    <div id="pdfContent" class="md:col-span-2" style="display: none;">
+                        <label asp-for="PdfFilePath" class="block text-sm font-medium text-gray-300 mb-2">PDF File Path</label>
+                        <input asp-for="PdfFilePath" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter PDF file path" />
+                        <span asp-validation-for="PdfFilePath" class="text-red-400 text-sm"></span>
+                        <p class="text-sm text-gray-400 mt-2">Enter the path to your PDF file (e.g., /pdfs/course.pdf)</p>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
+                    <a asp-action="Index" class="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white font-semibold hover:bg-white/20 transition-all duration-300">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
+                        Create Course
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentTypeSelect = document.getElementById('contentType');
+            const textContent = document.getElementById('textContent');
+            const videoContent = document.getElementById('videoContent');
+            const pdfContent = document.getElementById('pdfContent');
+
+            function toggleContentFields() {
+                const selectedType = contentTypeSelect.value;
+                
+                // Hide all content fields
+                textContent.style.display = 'none';
+                videoContent.style.display = 'none';
+                pdfContent.style.display = 'none';
+                
+                // Show the appropriate field
+                switch(selectedType) {
+                    case '0': // Text
+                        textContent.style.display = 'block';
+                        break;
+                    case '1': // PDF
+                        pdfContent.style.display = 'block';
+                        break;
+                    case '2': // Video
+                        videoContent.style.display = 'block';
+                        break;
+                }
+            }
+
+            contentTypeSelect.addEventListener('change', toggleContentFields);
+            toggleContentFields(); // Initialize on page load
+        });
+    </script>
+} 

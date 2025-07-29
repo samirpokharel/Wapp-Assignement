@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization; // Required for [Authorize]
 using Microsoft.AspNetCore.Identity; // Required for UserManager
 using Microsoft.EntityFrameworkCore; // Required for .ToListAsync()
 using SimpleLMS.Data;
+using SimpleLMS.Models;
 using SimpleLMS.Models.ViewModels;
 using System.Threading.Tasks;
 
@@ -25,26 +26,72 @@ public class DashboardController : Controller
     // This is the main action for our dashboard page
     public async Task<IActionResult> Index()
     {
-        // Get the currently logged-in user
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
+        var userId = _userManager.GetUserId(User);
+        if (string.IsNullOrEmpty(userId))
         {
-            // This case is unlikely due to [Authorize], but good practice
-            return Challenge(); 
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
         }
 
-        // Fetch all courses from the database
-        var allCourses = await _context.Courses.OrderBy(c => c.Title).ToListAsync();
+        var user = await _userManager.FindByIdAsync(userId);
+        var userName = user?.UserName ?? user?.Email ?? "User";
 
-        // Prepare the view model with all the necessary data
-        var viewModel = new DashboardViewModel
+        // Get user's enrolled courses with progress
+        var enrollments = await _context.Enrollments
+            .Include(e => e.Course)
+            .Where(e => e.UserId == userId)
+            .OrderByDescending(e => e.EnrolledAt)
+            .ToListAsync();
+
+        // Calculate statistics
+        var totalEnrolled = enrollments.Count;
+        var completedCourses = enrollments.Count(e => e.IsCompleted);
+        var inProgressCourses = enrollments.Count(e => !e.IsCompleted);
+        var completionRate = totalEnrolled > 0 ? (double)completedCourses / totalEnrolled * 100 : 0;
+
+        // Get recent activity (last 5 enrollments)
+        var recentActivity = enrollments.Take(5).ToList();
+
+        // Get recommended courses (courses not enrolled in)
+        var enrolledCourseIds = enrollments.Select(e => e.CourseId).ToList();
+        var recommendedCourses = await _context.Courses
+            .Where(c => c.IsActive && !enrolledCourseIds.Contains(c.Id))
+            .OrderByDescending(c => c.CreatedAt)
+            .Take(3)
+            .ToListAsync();
+
+        var dashboardViewModel = new DashboardViewModel
         {
-            UserName = user.UserName ?? "User",
-            UserInitials = (user.UserName?.Length >= 2) ? user.UserName.Substring(0, 2).ToUpper() : "U",
-            Courses = allCourses
+            UserName = userName,
+            UserInitials = GetUserInitials(userName),
+            EnrolledCourses = enrollments,
+            TotalEnrolled = totalEnrolled,
+            CompletedCourses = completedCourses,
+            InProgressCourses = inProgressCourses,
+            CompletionRate = completionRate,
+            RecentActivity = recentActivity,
+            RecommendedCourses = recommendedCourses
         };
-        
-        // Pass the populated view model to the view
-        return View(viewModel);
+
+        return View(dashboardViewModel);
+    }
+
+    private string GetUserInitials(string userName)
+    {
+        if (string.IsNullOrEmpty(userName))
+            return "U";
+
+        var parts = userName.Split('@')[0].Split('.', ' ', '_');
+        if (parts.Length >= 2)
+        {
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        }
+        else if (parts.Length == 1 && parts[0].Length >= 2)
+        {
+            return parts[0].Substring(0, 2).ToUpper();
+        }
+        else
+        {
+            return userName.Substring(0, Math.Min(2, userName.Length)).ToUpper();
+        }
     }
 }

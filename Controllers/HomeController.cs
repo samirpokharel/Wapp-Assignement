@@ -16,7 +16,7 @@ public class HomeController : Controller
         _signInManager = signInManager;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
         // If user is signed in, redirect to dashboard
         if (_signInManager.IsSignedIn(User))

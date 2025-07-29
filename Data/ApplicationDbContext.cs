@@ -18,4 +18,8 @@ public class ApplicationDbContext : IdentityDbContext
     
     // Add this new DbSet for the Enrollment table
     public DbSet<Enrollment> Enrollments { get; set; }
+    
+    // Add these new DbSets for the Topic and ContentItem tables
+    public DbSet<Topic> Topics { get; set; }
+    public DbSet<ContentItem> ContentItems { get; set; }
 }

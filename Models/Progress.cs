@@ -16,6 +16,12 @@ public class Progress
     // This property will hold the foreign key to the Courses table
     [Required]
     public int CourseId { get; set; }
+    
+    // This property will hold the foreign key to the Topics table (optional)
+    public int? TopicId { get; set; }
+    
+    // This property will hold the foreign key to the ContentItems table (optional)
+    public int? ContentItemId { get; set; }
 
     // The status of the progress
     public ProgressStatus Status { get; set; } = ProgressStatus.Incomplete;
@@ -30,4 +36,10 @@ public class Progress
 
     [ForeignKey("CourseId")]
     public virtual Course Course { get; set; } = null!;
+    
+    [ForeignKey("TopicId")]
+    public virtual Topic? Topic { get; set; }
+    
+    [ForeignKey("ContentItemId")]
+    public virtual ContentItem? ContentItem { get; set; }
 }

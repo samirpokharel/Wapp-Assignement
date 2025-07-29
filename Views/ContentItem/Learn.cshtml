@@ -1,0 +1,157 @@
+@model SimpleLMS.Models.ContentItem
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="min-h-screen px-6 py-12">
+    <div class="max-w-6xl mx-auto">
+        <!-- Breadcrumb -->
+        <nav class="mb-8">
+            <div class="flex items-center space-x-2 text-sm">
+                <a asp-controller="Courses" asp-action="Index" class="text-indigo-400 hover:text-indigo-300 transition-colors duration-300">
+                    Courses
+                </a>
+                <span class="text-gray-500">/</span>
+                <a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.Topic.CourseId" class="text-indigo-400 hover:text-indigo-300 transition-colors duration-300">
+                    @Model.Topic.Course.Title
+                </a>
+                <span class="text-gray-500">/</span>
+                <span class="text-gray-400">@Model.Topic.Title</span>
+                <span class="text-gray-500">/</span>
+                <span class="text-white">@Model.Title</span>
+            </div>
+        </nav>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2">
+                <!-- Content Header -->
+                <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 mb-8">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <span class="px-4 py-2 bg-purple-500/20 text-purple-400 text-sm font-medium rounded-full">
+                                    @Model.ContentType
+                                </span>
+                                <span class="px-4 py-2 bg-gray-500/20 text-gray-400 text-sm font-medium rounded-full">
+                                    Item @Model.Order
+                                </span>
+                            </div>
+                            <h1 class="text-3xl md:text-4xl font-black mb-4">
+                                <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                                    @Model.Title
+                                </span>
+                            </h1>
+                            <p class="text-xl text-gray-300 leading-relaxed">
+                                @Model.Description
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Display -->
+                <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-6">Content</h2>
+                    
+                    @switch (Model.ContentType)
+                    {
+                        case ContentType.Text:
+                            <div class="prose prose-invert max-w-none">
+                                <div class="bg-white/5 rounded-lg p-6">
+                                    @Html.Raw(Markdig.Markdown.ToHtml(Model.Content))
+                                </div>
+                            </div>
+                            break;
+                            
+                        case ContentType.Video:
+                            <div class="aspect-video bg-black rounded-lg overflow-hidden">
+                                <iframe src="@Model.VideoUrl" 
+                                        class="w-full h-full" 
+                                        frameborder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen>
+                                </iframe>
+                            </div>
+                            break;
+                            
+                        case ContentType.Pdf:
+                            <div class="bg-white/5 rounded-lg p-6">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <svg class="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-white font-semibold">PDF Document</span>
+                                </div>
+                                <a href="@Model.PdfFilePath" 
+                                   class="inline-flex items-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-300">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    Download PDF
+                                </a>
+                            </div>
+                            break;
+                    }
+                    
+                    <!-- Complete Content Button -->
+                    <div class="mt-8 pt-6 border-t border-white/10">
+                        <form asp-action="Complete" asp-route-id="@Model.Id" method="post">
+                            <button type="submit" 
+                                    class="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Mark as Complete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Course Info -->
+                <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+                    <h3 class="text-lg font-semibold text-white mb-4">Course Information</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-sm text-gray-400">Course</p>
+                            <p class="text-white font-medium">@Model.Topic.Course.Title</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Topic</p>
+                            <p class="text-white font-medium">@Model.Topic.Title</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Instructor</p>
+                            <p class="text-white font-medium">@Model.Topic.Course.Instructor</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Content Type</p>
+                            <p class="text-white font-medium">@Model.ContentType</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+                    <h3 class="text-lg font-semibold text-white mb-4">Navigation</h3>
+                    <div class="space-y-2">
+                        <a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.Topic.CourseId" 
+                           class="block px-4 py-3 bg-white/5 rounded-lg text-white hover:bg-white/10 transition-colors duration-300">
+                            ← Back to Course
+                        </a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="ContentItem" asp-action="Edit" asp-route-id="@Model.Id" 
+                               class="block px-4 py-3 bg-yellow-500/20 rounded-lg text-yellow-400 hover:bg-yellow-500/30 transition-colors duration-300">
+                                Edit Content
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

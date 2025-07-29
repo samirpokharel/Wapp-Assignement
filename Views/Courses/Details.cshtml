@@ -120,7 +120,7 @@
                                 </div>
                                 break;
                                 
-                            case ContentType.PDF:
+                            case ContentType.Pdf:
                                 <div class="bg-white/5 rounded-lg p-6">
                                     <div class="flex items-center space-x-3 mb-4">
                                         <svg class="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 20 20">
@@ -152,6 +152,138 @@
                             </form>
                         </div>
                     </div>
+                    
+                    <!-- Course Topics -->
+                    @if (Model.Topics.Any())
+                    {
+                        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 mb-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-2xl font-bold text-white">Course Topics</h2>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-controller="Topic" asp-action="Create" asp-route-courseId="@Model.Id" 
+                                       class="px-4 py-2 bg-indigo-500/20 text-indigo-400 rounded-lg hover:bg-indigo-500/30 transition-colors duration-300">
+                                        + Add Topic
+                                    </a>
+                                }
+                            </div>
+                            
+                            <div class="space-y-6">
+                                @foreach (var topic in Model.Topics)
+                                {
+                                    <div class="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-indigo-500/30 transition-all duration-300">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <div class="flex-1">
+                                                <div class="flex items-center space-x-3 mb-2">
+                                                    <span class="px-3 py-1 bg-indigo-500/20 text-indigo-400 text-sm font-medium rounded-full">
+                                                        Topic @topic.Order
+                                                    </span>
+                                                </div>
+                                                <h3 class="text-xl font-semibold text-white mb-2">@topic.Title</h3>
+                                                <p class="text-gray-300 text-sm">@topic.Description</p>
+                                            </div>
+                                            
+                                            <div class="flex space-x-2">
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <a asp-controller="Topic" asp-action="Edit" asp-route-id="@topic.Id" 
+                                                       class="px-4 py-2 bg-yellow-500/20 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors duration-300">
+                                                        Edit
+                                                    </a>
+                                                    <a asp-controller="Topic" asp-action="Delete" asp-route-id="@topic.Id" 
+                                                       class="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors duration-300">
+                                                        Delete
+                                                    </a>
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Content Items -->
+                                        @if (topic.ContentItems.Any())
+                                        {
+                                            <div class="space-y-3">
+                                                <h4 class="text-lg font-medium text-white mb-3">Content Items</h4>
+                                                @foreach (var contentItem in topic.ContentItems.OrderBy(c => c.Order))
+                                                {
+                                                    <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                                                        <div class="flex items-center justify-between">
+                                                            <div class="flex-1">
+                                                                <div class="flex items-center space-x-3 mb-2">
+                                                                    <span class="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs font-medium rounded-full">
+                                                                        @contentItem.ContentType
+                                                                    </span>
+                                                                    <span class="text-gray-400 text-xs">Item @contentItem.Order</span>
+                                                                </div>
+                                                                <h5 class="text-white font-medium mb-1">@contentItem.Title</h5>
+                                                                <p class="text-gray-400 text-sm">@contentItem.Description</p>
+                                                            </div>
+                                                            
+                                                            <div class="flex space-x-2">
+                                                                <a asp-controller="ContentItem" asp-action="Learn" asp-route-id="@contentItem.Id" 
+                                                                   class="px-3 py-2 bg-indigo-500/20 text-indigo-400 rounded-lg hover:bg-indigo-500/30 transition-colors duration-300 text-sm">
+                                                                    Learn
+                                                                </a>
+                                                                @if (User.IsInRole("Admin"))
+                                                                {
+                                                                    <a asp-controller="ContentItem" asp-action="Edit" asp-route-id="@contentItem.Id" 
+                                                                       class="px-3 py-2 bg-yellow-500/20 text-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-colors duration-300 text-sm">
+                                                                        Edit
+                                                                    </a>
+                                                                    <a asp-controller="ContentItem" asp-action="Delete" asp-route-id="@contentItem.Id" 
+                                                                       class="px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors duration-300 text-sm">
+                                                                        Delete
+                                                                    </a>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-center py-6">
+                                                <div class="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                                                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                    </svg>
+                                                </div>
+                                                <p class="text-gray-400 text-sm mb-3">No content items yet</p>
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <a asp-controller="ContentItem" asp-action="Create" asp-route-topicId="@topic.Id" 
+                                                       class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300 text-sm">
+                                                        Add Content Item
+                                                    </a>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 mb-8">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white mb-2">No Topics Yet</h3>
+                                <p class="text-gray-400 mb-4">This course doesn't have any topics yet.</p>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-controller="Topic" asp-action="Create" asp-route-courseId="@Model.Id" 
+                                       class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
+                                        Add First Topic
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
                 }
                 else
                 {

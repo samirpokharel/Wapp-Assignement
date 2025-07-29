@@ -1,9 +1,8 @@
-// Models/Course.cs
 using System.ComponentModel.DataAnnotations;
 
 namespace SimpleLMS.Models;
 
-public class Course
+public class Module
 {
     public int Id { get; set; }
     
@@ -11,19 +10,18 @@ public class Course
     [StringLength(150)]
     public string Title { get; set; } = string.Empty;
     
-    [Required]
-    [StringLength(255)]
+    [StringLength(500)]
     public string Description { get; set; } = string.Empty;
     
-    [StringLength(255)]
-    [Display(Name = "Content Path")]
-    public string? ContentPath { get; set; } = string.Empty;
+    [Required]
+    public int CourseId { get; set; }
     
-    // Content type and actual content
+    public int Order { get; set; } = 1; // For ordering modules within a course
+    
     [Display(Name = "Content Type")]
     public ContentType ContentType { get; set; } = ContentType.Text;
     
-    [Display(Name = "Course Content")]
+    [Display(Name = "Module Content")]
     public string Content { get; set; } = string.Empty; // For text content
     
     [StringLength(500)]
@@ -34,26 +32,11 @@ public class Course
     [Display(Name = "PDF File Path")]
     public string? PdfFilePath { get; set; } // For PDF content
     
-    // Additional properties that might be needed
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
     public bool IsActive { get; set; } = true;
     
-    [StringLength(50)]
-    public string Instructor { get; set; } = string.Empty;
-    
-    [Range(1, 100)]
-    public int Duration { get; set; } = 1; // Duration in hours
-    
-    [StringLength(20)]
-    public string Level { get; set; } = "Beginner"; // Beginner, Intermediate, Advanced
-    
-    public decimal Price { get; set; } = 0.00m;
-    
-    [StringLength(200)]
-    public string? ImageUrl { get; set; }
-    
-    // Navigation properties for relationships
+    // Navigation properties
+    public Course Course { get; set; } = null!;
     public List<Progress> Progresses { get; set; } = new List<Progress>();
-    public List<Topic> Topics { get; set; } = new List<Topic>();
-}
+} 

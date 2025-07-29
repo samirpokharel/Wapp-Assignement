@@ -11,7 +11,6 @@
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/appsettings.json
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/global.json
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/SimpleLMS.staticwebassets.runtime.json
-/home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/app.db
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/SimpleLMS
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/SimpleLMS.deps.json
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/SimpleLMS.runtimeconfig.json
@@ -267,3 +266,4 @@
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/obj/Debug/net8.0/SimpleLMS.genruntimeconfig.cache
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/obj/Debug/net8.0/ref/SimpleLMS.dll
 /home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/Markdig.dll
+/home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/bin/Debug/net8.0/app.db

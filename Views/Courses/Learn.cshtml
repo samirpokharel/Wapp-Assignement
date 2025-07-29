@@ -1,0 +1,148 @@
+@model SimpleLMS.Models.Course
+@{
+    ViewData["Title"] = $"Learning - {Model.Title}";
+}
+
+<div class="min-h-screen px-6 py-12">
+    <div class="max-w-4xl mx-auto">
+        <!-- Course Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">@Model.Title</h1>
+                    <p class="text-gray-300">@Model.Description</p>
+                </div>
+                <a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.Id" 
+                   class="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white hover:bg-white/20 transition-colors duration-300">
+                    ← Back to Course
+                </a>
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-gray-400">
+                <span>Instructor: @Model.Instructor</span>
+                <span>•</span>
+                <span>Duration: @Model.Duration hours</span>
+                <span>•</span>
+                <span>Level: @Model.Level</span>
+            </div>
+        </div>
+
+        <!-- Course Content -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+            @if (Model.ContentType == SimpleLMS.Models.ContentType.Text)
+            {
+                <!-- Text Content -->
+                <div class="prose prose-invert max-w-none">
+                    <h2 class="text-2xl font-bold text-white mb-6">Course Content</h2>
+                    <div class="text-gray-300 leading-relaxed">
+                        @Html.Raw(Markdig.Markdown.ToHtml(Model.Content ?? "No content available."))
+                    </div>
+                </div>
+            }
+            else if (Model.ContentType == SimpleLMS.Models.ContentType.Video)
+            {
+                <!-- Video Content -->
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-6">Video Lesson</h2>
+                    @if (!string.IsNullOrEmpty(Model.VideoUrl))
+                    {
+                        <div class="relative w-full" style="padding-bottom: 56.25%;">
+                            <iframe class="absolute top-0 left-0 w-full h-full rounded-lg"
+                                    src="@Model.VideoUrl"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="mt-6">
+                            <h3 class="text-lg font-semibold text-white mb-2">Video Description</h3>
+                            <p class="text-gray-300">@Model.Description</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-2">No Video Available</h3>
+                            <p class="text-gray-400">This course doesn't have a video lesson yet.</p>
+                        </div>
+                    }
+                </div>
+            }
+            else if (Model.ContentType == SimpleLMS.Models.ContentType.Pdf)
+            {
+                <!-- PDF Content -->
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-6">Course Materials</h2>
+                    @if (!string.IsNullOrEmpty(Model.PdfFilePath))
+                    {
+                        <div class="bg-white/5 rounded-lg p-6 border border-white/10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <svg class="w-8 h-8 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-white">Course PDF</h3>
+                                        <p class="text-gray-400 text-sm">Download the course materials</p>
+                                    </div>
+                                </div>
+                                <a href="@Model.PdfFilePath" target="_blank" 
+                                   class="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors duration-300">
+                                    Download PDF
+                                </a>
+                            </div>
+                            <div class="text-gray-300">
+                                <p>@Model.Description</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-2">No PDF Available</h3>
+                            <p class="text-gray-400">This course doesn't have PDF materials yet.</p>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <!-- Default Content -->
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2">No Content Available</h3>
+                    <p class="text-gray-400">This course doesn't have any content yet.</p>
+                </div>
+            }
+        </div>
+
+        <!-- Course Completion -->
+        <div class="mt-8 bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Course Progress</h3>
+                    <p class="text-gray-300">Mark this course as completed when you finish</p>
+                </div>
+                <form asp-action="Complete" asp-route-id="@Model.Id" method="post">
+                    <button type="submit" 
+                            class="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300">
+                        Mark as Completed
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 

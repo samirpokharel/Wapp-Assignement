@@ -3,6 +3,6 @@ namespace SimpleLMS.Models;
 public enum ContentType
 {
     Text = 0,
-    PDF = 1,
+    Pdf = 1,
     Video = 2
 } 

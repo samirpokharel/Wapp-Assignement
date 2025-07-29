@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SimpleLMS.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250729181608_AddModules")]
+    partial class AddModules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.18");
@@ -212,56 +215,6 @@ namespace SimpleLMS.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SimpleLMS.Models.ContentItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ContentType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("PdfFilePath")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("TopicId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("VideoUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
-
-                    b.ToTable("ContentItems");
-                });
-
             modelBuilder.Entity("SimpleLMS.Models.Course", b =>
                 {
                     b.Property<int>("Id")
@@ -359,45 +312,17 @@ namespace SimpleLMS.Data.Migrations
                     b.ToTable("Enrollments");
                 });
 
-            modelBuilder.Entity("SimpleLMS.Models.Progress", b =>
+            modelBuilder.Entity("SimpleLMS.Models.Module", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ContentItemId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("TopicId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContentItemId");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("TopicId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Progresses");
-                });
-
-            modelBuilder.Entity("SimpleLMS.Models.Topic", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ContentType")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CourseId")
@@ -417,16 +342,54 @@ namespace SimpleLMS.Data.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("PdfFilePath")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("VideoUrl")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Topics");
+                    b.ToTable("Modules");
+                });
+
+            modelBuilder.Entity("SimpleLMS.Models.Progress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ModuleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("ModuleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Progresses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -480,17 +443,6 @@ namespace SimpleLMS.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SimpleLMS.Models.ContentItem", b =>
-                {
-                    b.HasOne("SimpleLMS.Models.Topic", "Topic")
-                        .WithMany("ContentItems")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-                });
-
             modelBuilder.Entity("SimpleLMS.Models.Enrollment", b =>
                 {
                     b.HasOne("SimpleLMS.Models.Course", "Course")
@@ -510,21 +462,28 @@ namespace SimpleLMS.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SimpleLMS.Models.Module", b =>
+                {
+                    b.HasOne("SimpleLMS.Models.Course", "Course")
+                        .WithMany("Modules")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("SimpleLMS.Models.Progress", b =>
                 {
-                    b.HasOne("SimpleLMS.Models.ContentItem", "ContentItem")
-                        .WithMany("Progresses")
-                        .HasForeignKey("ContentItemId");
-
                     b.HasOne("SimpleLMS.Models.Course", "Course")
                         .WithMany("Progresses")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SimpleLMS.Models.Topic", "Topic")
+                    b.HasOne("SimpleLMS.Models.Module", null)
                         .WithMany("Progresses")
-                        .HasForeignKey("TopicId");
+                        .HasForeignKey("ModuleId");
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()
@@ -532,42 +491,20 @@ namespace SimpleLMS.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ContentItem");
-
                     b.Navigation("Course");
-
-                    b.Navigation("Topic");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SimpleLMS.Models.Topic", b =>
-                {
-                    b.HasOne("SimpleLMS.Models.Course", "Course")
-                        .WithMany("Topics")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("SimpleLMS.Models.ContentItem", b =>
-                {
-                    b.Navigation("Progresses");
-                });
-
             modelBuilder.Entity("SimpleLMS.Models.Course", b =>
                 {
-                    b.Navigation("Progresses");
+                    b.Navigation("Modules");
 
-                    b.Navigation("Topics");
+                    b.Navigation("Progresses");
                 });
 
-            modelBuilder.Entity("SimpleLMS.Models.Topic", b =>
+            modelBuilder.Entity("SimpleLMS.Models.Module", b =>
                 {
-                    b.Navigation("ContentItems");
-
                     b.Navigation("Progresses");
                 });
 #pragma warning restore 612, 618

@@ -1,0 +1,46 @@
+@model SimpleLMS.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    // IMPORTANT: Tell Razor to use our new Dashboard layout file
+    Layout = "_DashboardLayout";
+}
+
+<!-- Page Title -->
+<div class="mb-8 animate-slide-in-right">
+    <h2 class="text-4xl font-bold text-white mb-2 flex items-center">Available Courses</h2>
+    <p class="text-gray-300 text-lg">Explore our comprehensive learning library</p>
+</div>
+
+<!-- Courses Grid -->
+<div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+    @if (!Model.Courses.Any())
+    {
+        <!-- Empty State -->
+        <div class="md:col-span-2 xl:col-span-3 text-center py-12 animate-slide-up">
+            <div class="bg-white/5 backdrop-blur-xl rounded-3xl p-12 border border-white/10 shadow-2xl">
+                <h3 class="text-2xl font-bold text-white mb-4">No Courses Available Yet</h3>
+                <p class="text-gray-300 text-lg">Create a new course in the 'Courses' section to see it here!</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        @for (int i = 0; i < Model.Courses.Count; i++)
+        {
+            var course = Model.Courses[i];
+            <div class="group bg-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl hover:shadow-indigo-500/25 transition-all duration-300 transform hover:scale-105 animate-slide-up" style="animation-delay: @(i * 0.1)s;">
+                <h3 class="text-xl font-bold text-white mb-3 group-hover:text-indigo-300 transition-colors duration-300">
+                    @course.Title
+                </h3>
+                <p class="text-gray-300 leading-relaxed line-clamp-3">
+                    @course.Description
+                </p>
+                 <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" 
+                   class="mt-6 block w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl text-white font-semibold text-center shadow-lg hover:shadow-purple-500/25 transform transition-all duration-300 group-hover:scale-105">
+                    Explore Course
+                </a>
+            </div>
+        }
+    }
+</div>

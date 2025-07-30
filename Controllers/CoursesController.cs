@@ -44,6 +44,7 @@ public class CoursesController : Controller
 
         var course = await _context.Courses
             .Include(c => c.Topics.OrderBy(t => t.Order))
+                .ThenInclude(t => t.ContentItems.OrderBy(ci => ci.Order))
             .FirstOrDefaultAsync(m => m.Id == id);
             
         if (course == null)
@@ -78,7 +79,7 @@ public class CoursesController : Controller
         var userId = _userManager.GetUserId(User);
         if (string.IsNullOrEmpty(userId))
         {
-            return RedirectToAction("Login", "Account", new { area = "Identity" });
+            return RedirectToAction("Account", "Login", new { area = "Identity" });
         }
 
         // Check if already enrolled
@@ -116,6 +117,8 @@ public class CoursesController : Controller
         }
 
         var course = await _context.Courses
+            .Include(c => c.Topics.OrderBy(t => t.Order))
+                .ThenInclude(t => t.ContentItems.OrderBy(ci => ci.Order))
             .FirstOrDefaultAsync(m => m.Id == id);
             
         if (course == null)

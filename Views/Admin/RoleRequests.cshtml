@@ -1,0 +1,127 @@
+@model IEnumerable<SimpleLMS.Models.RoleRequest>
+@{
+    ViewData["Title"] = "Role Requests";
+    Layout = "_Layout";
+}
+
+<div class="min-h-screen px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Role Requests</h1>
+                    <p class="text-gray-300">Manage instructor role requests from users</p>
+                </div>
+                <a asp-action="Index" class="px-4 py-2 bg-indigo-500/20 text-indigo-400 rounded-lg hover:bg-indigo-500/30 transition-colors duration-300">
+                    ← Back to Admin Panel
+                </a>
+            </div>
+        </div>
+
+        <!-- Role Requests List -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
+            @if (Model.Any())
+            {
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-3 px-4 text-gray-300 font-medium">User</th>
+                                <th class="text-left py-3 px-4 text-gray-300 font-medium">Requested Role</th>
+                                <th class="text-left py-3 px-4 text-gray-300 font-medium">Reason</th>
+                                <th class="text-left py-3 px-4 text-gray-300 font-medium">Requested</th>
+                                <th class="text-left py-3 px-4 text-gray-300 font-medium">Status</th>
+                                <th class="text-left py-3 px-4 text-gray-300 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var request in Model)
+                            {
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors duration-300">
+                                    <td class="py-4 px-4">
+                                        <div>
+                                            <p class="text-white font-medium">@request.User.UserName</p>
+                                            <p class="text-sm text-gray-400">@request.User.Email</p>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-sm">@request.RequestedRole</span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <p class="text-gray-300 text-sm max-w-xs truncate" title="@request.Reason">
+                                            @(string.IsNullOrEmpty(request.Reason) ? "No reason provided" : request.Reason)
+                                        </p>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <p class="text-gray-300 text-sm">@request.RequestedAt.ToString("MMM dd, yyyy")</p>
+                                        <p class="text-gray-400 text-xs">@request.RequestedAt.ToString("HH:mm")</p>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        @switch (request.Status)
+                                        {
+                                            case SimpleLMS.Models.RoleRequestStatus.Pending:
+                                                <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-sm">Pending</span>
+                                                break;
+                                            case SimpleLMS.Models.RoleRequestStatus.Approved:
+                                                <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded text-sm">Approved</span>
+                                                break;
+                                            case SimpleLMS.Models.RoleRequestStatus.Rejected:
+                                                <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded text-sm">Rejected</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        @if (request.Status == SimpleLMS.Models.RoleRequestStatus.Pending)
+                                        {
+                                            <div class="flex space-x-2">
+                                                <form asp-controller="Dashboard" asp-action="ApproveRoleRequest" method="post" style="display: inline;">
+                                                    <input type="hidden" name="requestId" value="@request.Id" />
+                                                    <button type="submit" class="px-3 py-1 bg-green-500/20 text-green-400 rounded text-sm hover:bg-green-500/30 transition-colors duration-300">
+                                                        Approve
+                                                    </button>
+                                                </form>
+                                                <form asp-controller="Dashboard" asp-action="RejectRoleRequest" method="post" style="display: inline;">
+                                                    <input type="hidden" name="requestId" value="@request.Id" />
+                                                    <input type="hidden" name="adminNotes" value="" />
+                                                    <button type="submit" class="px-3 py-1 bg-red-500/20 text-red-400 rounded text-sm hover:bg-red-500/30 transition-colors duration-300">
+                                                        Reject
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-sm text-gray-400">
+                                                @if (request.ProcessedAt.HasValue)
+                                                {
+                                                    <p>Processed: @request.ProcessedAt.Value.ToString("MMM dd, yyyy")</p>
+                                                }
+                                                @if (!string.IsNullOrEmpty(request.AdminNotes))
+                                                {
+                                                    <p class="mt-1" title="@request.AdminNotes">Notes: @(request.AdminNotes.Length > 30 ? request.AdminNotes.Substring(0, 30) + "..." : request.AdminNotes)</p>
+                                                }
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2">No Role Requests</h3>
+                    <p class="text-gray-400">There are no pending or processed role requests at the moment.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div> 

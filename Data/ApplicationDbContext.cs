@@ -1,4 +1,5 @@
 ﻿// Data/ApplicationDbContext.cs
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SimpleLMS.Models; // Add this line
@@ -22,4 +23,17 @@ public class ApplicationDbContext : IdentityDbContext
     // Add these new DbSets for the Topic and ContentItem tables
     public DbSet<Topic> Topics { get; set; }
     public DbSet<ContentItem> ContentItems { get; set; }
+    
+    // Add DbSet for RoleRequest table
+    public DbSet<RoleRequest> RoleRequests { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        
+        // Add Role column to AspNetUsers table
+        builder.Entity<IdentityUser>()
+            .Property<string>("Role")
+            .HasMaxLength(50);
+    }
 }

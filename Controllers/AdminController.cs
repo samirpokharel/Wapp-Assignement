@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SimpleLMS.Data;
 using SimpleLMS.Models;
@@ -25,6 +26,35 @@ public class AdminController : Controller
             .ToListAsync();
             
         return View(courses);
+    }
+    
+    // GET: Admin/RoleRequests
+    public async Task<IActionResult> RoleRequests()
+    {
+        var roleRequests = await _context.RoleRequests
+            .Include(rr => rr.User)
+            .OrderByDescending(rr => rr.RequestedAt)
+            .ToListAsync();
+            
+        return View(roleRequests);
+    }
+    
+    // POST: Admin/SeedData
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> SeedData()
+    {
+        try
+        {
+            await SimpleLMS.Data.SeedData.SeedDatabase(HttpContext.RequestServices);
+            TempData["SuccessMessage"] = "Database seeded successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Error seeding database: {ex.Message}";
+        }
+        
+        return RedirectToAction(nameof(Index));
     }
 
     // GET: Admin/Create

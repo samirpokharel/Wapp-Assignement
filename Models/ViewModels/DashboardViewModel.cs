@@ -19,6 +19,13 @@ public class DashboardViewModel
     public int InProgressCourses { get; set; }
     public double CompletionRate { get; set; }
     
+    // Role request information
+    public bool HasPendingRoleRequest { get; set; }
+    public RoleRequest? CurrentRoleRequest { get; set; }
+    public List<RoleRequest> PendingRoleRequests { get; set; } = new List<RoleRequest>();
+    public bool IsAdmin { get; set; }
+    public bool IsInstructor { get; set; }
+    
     // Legacy property for backward compatibility
     public List<Course> Courses => EnrolledCourses.Select(e => e.Course).ToList();
 }

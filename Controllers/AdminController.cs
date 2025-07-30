@@ -7,6 +7,7 @@ using SimpleLMS.Models;
 
 namespace SimpleLMS.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -271,4 +272,4 @@ public class AdminController : Controller
     {
         return _context.Courses.Any(e => e.Id == id);
     }
-} 
+}

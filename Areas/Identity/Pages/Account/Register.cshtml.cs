@@ -122,6 +122,10 @@ namespace SimpleLMS.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    // Assign default 'User' role to newly registered users
+                    await _userManager.AddToRoleAsync(user, "User");
+                    _logger.LogInformation("Default 'User' role assigned to new account.");
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

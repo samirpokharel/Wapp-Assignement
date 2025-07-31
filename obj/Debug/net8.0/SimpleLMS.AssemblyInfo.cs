@@ -15,7 +15,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SimpleLMS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abf4d8ea3e4890a66cddada44e64ba622b6208d8")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd432d81750b31c42ecc9176a20576838da12ea6")]
+>>>>>>> 49961514b6f104f2957adc265c53fa20200d2a5c
 [assembly: System.Reflection.AssemblyProductAttribute("SimpleLMS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SimpleLMS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

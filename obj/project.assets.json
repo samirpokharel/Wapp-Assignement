@@ -6944,19 +6944,19 @@
     ]
   },
   "packageFolders": {
-    "/home/smr/.nuget/packages/": {}
+    "/Users/sumankarki/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/SimpleLMS.csproj",
+      "projectUniqueName": "/Users/sumankarki/Desktop/lms/Wapp-Assignement/SimpleLMS.csproj",
       "projectName": "SimpleLMS",
-      "projectPath": "/home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/SimpleLMS.csproj",
-      "packagesPath": "/home/smr/.nuget/packages/",
-      "outputPath": "/home/smr/_dev/sandbox/asp-net-wapp-assignment/SimpleLMS/obj/",
+      "projectPath": "/Users/sumankarki/Desktop/lms/Wapp-Assignement/SimpleLMS.csproj",
+      "packagesPath": "/Users/sumankarki/.nuget/packages/",
+      "outputPath": "/Users/sumankarki/Desktop/lms/Wapp-Assignement/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/smr/.nuget/NuGet/NuGet.Config"
+        "/Users/sumankarki/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -6974,6 +6974,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -7020,12 +7025,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.18, 8.0.18]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -7034,7 +7033,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.118/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
       }
     }
   },

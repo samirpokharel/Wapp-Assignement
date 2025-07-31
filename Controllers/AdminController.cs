@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SimpleLMS.Data;
 using SimpleLMS.Models;
+using SimpleLMS.Models.ViewModels;
 
 namespace SimpleLMS.Controllers;
 
@@ -65,16 +66,49 @@ public class AdminController : Controller
             .Cast<ContentType>()
             .Select(ct => new { Value = (int)ct, Text = ct.ToString() }), "Value", "Text");
             
-        return View();
+        var viewModel = new CourseCreateViewModel();
+        return View(viewModel);
     }
 
     // POST: Admin/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Title,Description,ContentPath,ContentType,Content,VideoUrl,PdfFilePath,Instructor,Duration,Level,Price,ImageUrl")] Course course, IFormFile? pdfFile)
+    public async Task<IActionResult> Create(CourseCreateViewModel viewModel, IFormFile? pdfFile)
     {
+        // Debug: Log the received data
+        Console.WriteLine($"Received course creation request:");
+        Console.WriteLine($"Title: {viewModel.Title}");
+        Console.WriteLine($"Description: {viewModel.Description}");
+        Console.WriteLine($"ContentType: {viewModel.ContentType}");
+        Console.WriteLine($"Instructor: {viewModel.Instructor}");
+        Console.WriteLine($"Topics count: {viewModel.Topics?.Count ?? 0}");
+        
+        // Debug: Log validation errors if any
+        if (!ModelState.IsValid)
+        {
+            Console.WriteLine("ModelState is invalid:");
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine($"Error: {error.ErrorMessage}");
+            }
+        }
+        
         if (ModelState.IsValid)
         {
+            // Create the course
+            var course = new Course
+            {
+                Title = viewModel.Title,
+                Description = viewModel.Description,
+                ContentType = viewModel.ContentType,
+                Content = viewModel.Content,
+                VideoUrl = viewModel.VideoUrl,
+                PdfFilePath = viewModel.PdfFilePath,
+                Instructor = viewModel.Instructor,
+                IsActive = viewModel.IsActive,
+                CreatedAt = DateTime.UtcNow
+            };
+
             // Handle PDF file upload
             if (course.ContentType == ContentType.Pdf && pdfFile != null && pdfFile.Length > 0)
             {
@@ -118,13 +152,9 @@ public class AdminController : Controller
             // Handle Quiz content type
             if (course.ContentType == ContentType.Quiz)
             {
-                // For quiz courses, set a default content
                 course.Content = "Quiz course - content will be added through topics and content items.";
             }
 
-            course.CreatedAt = DateTime.UtcNow;
-            course.IsActive = true;
-            
             // Generate a content path if not provided
             if (string.IsNullOrEmpty(course.ContentPath))
             {
@@ -133,6 +163,97 @@ public class AdminController : Controller
             
             _context.Add(course);
             await _context.SaveChangesAsync();
+            Console.WriteLine($"Course saved with ID: {course.Id}");
+
+            // If this is a quiz course with topics, create them
+            if (course.ContentType == ContentType.Quiz && viewModel.Topics.Any())
+            {
+                foreach (var topicViewModel in viewModel.Topics)
+                {
+                    var topic = new Topic
+                    {
+                        Title = topicViewModel.Title,
+                        Description = topicViewModel.Description,
+                        Order = topicViewModel.Order,
+                        CourseId = course.Id,
+                        IsActive = true,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.Add(topic);
+                    await _context.SaveChangesAsync();
+
+                    // Create content item for this topic
+                    var contentItem = new ContentItem
+                    {
+                        Title = topic.Title,
+                        Description = topic.Description,
+                        ContentType = ContentType.Quiz,
+                        Order = 1,
+                        TopicId = topic.Id,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.Add(contentItem);
+                    await _context.SaveChangesAsync();
+
+                    // Create quiz for this content item if provided
+                    if (topicViewModel.Quiz != null)
+                    {
+                        var quiz = new Quiz
+                        {
+                            Title = topicViewModel.Quiz.Title,
+                            Description = topicViewModel.Quiz.Description,
+                            ContentItemId = contentItem.Id,
+                            TimeLimitMinutes = topicViewModel.Quiz.TimeLimitMinutes,
+                            PassingScore = topicViewModel.Quiz.PassingScore,
+                            MaxAttempts = topicViewModel.Quiz.MaxAttempts,
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        };
+
+                        _context.Add(quiz);
+                        await _context.SaveChangesAsync();
+
+                        // Create questions for this quiz
+                        foreach (var questionViewModel in topicViewModel.Quiz.Questions)
+                        {
+                            var question = new QuizQuestion
+                            {
+                                QuizId = quiz.Id,
+                                QuestionText = questionViewModel.QuestionText,
+                                QuestionType = questionViewModel.QuestionType,
+                                Points = questionViewModel.Points,
+                                Order = questionViewModel.Order,
+                                IsRequired = questionViewModel.IsRequired,
+                                CreatedAt = DateTime.UtcNow
+                            };
+
+                            _context.Add(question);
+                            await _context.SaveChangesAsync();
+
+                            // Create options for this question
+                            foreach (var optionViewModel in questionViewModel.Options)
+                            {
+                                var option = new QuizQuestionOption
+                                {
+                                    QuizQuestionId = question.Id,
+                                    OptionText = optionViewModel.OptionText,
+                                    IsCorrect = optionViewModel.IsCorrect,
+                                    Order = optionViewModel.Order,
+                                    CreatedAt = DateTime.UtcNow
+                                };
+
+                                _context.Add(option);
+                            }
+                        }
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
         
@@ -140,7 +261,7 @@ public class AdminController : Controller
             .Cast<ContentType>()
             .Select(ct => new { Value = (int)ct, Text = ct.ToString() }), "Value", "Text");
             
-        return View(course);
+        return View(viewModel);
     }
 
     // GET: Admin/Edit/5

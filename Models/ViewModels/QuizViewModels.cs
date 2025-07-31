@@ -22,6 +22,9 @@ public class QuizCreateViewModel
     
     [Range(1, 10, ErrorMessage = "Max attempts must be between 1 and 10")]
     public int MaxAttempts { get; set; } = 3;
+    
+    // For course creation with topics
+    public List<QuizQuestionViewModel> Questions { get; set; } = new List<QuizQuestionViewModel>();
 }
 
 public class QuizQuestionViewModel

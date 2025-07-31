@@ -48,7 +48,7 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
-        await DbInitializer.Initialize(app.Services);
+        await DbInitializer.Initialize(scope.ServiceProvider);
     }
     catch (Exception ex)
     {

@@ -1,170 +1,302 @@
-@model SimpleLMS.Models.Course
+@model SimpleLMS.Models.ViewModels.CourseCreateViewModel
 @{
     ViewData["Title"] = "Create Course";
 }
 
-<div class="min-h-screen px-6 py-12">
-    <div class="max-w-4xl mx-auto">
+<div class="min-h-screen bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h1 class="text-3xl font-bold text-white mb-2">Create New Course</h1>
-                    <p class="text-gray-300">Add a new course to the learning platform</p>
-                </div>
-                <a asp-action="Index" class="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg text-white hover:bg-white/20 transition-colors duration-300">
-                    ← Back to Admin
-                </a>
-            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">Create New Course</h1>
+            <p class="text-gray-400">Set up your course with all the necessary details</p>
         </div>
 
-        <!-- Create Form -->
-        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-            <form asp-action="Create" method="post" enctype="multipart/form-data" class="space-y-6">
-                <div asp-validation-summary="ModelOnly" class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400"></div>
+        <form asp-action="Create" method="post" enctype="multipart/form-data" class="space-y-8">
+            <!-- Course Basic Information -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Course Information</h2>
                 
-                <!-- Basic Information -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label asp-for="Title" class="block text-sm font-medium text-gray-300">Course Title</label>
+                    <div>
+                        <label asp-for="Title" class="block text-sm font-medium text-gray-300 mb-2">Course Title</label>
                         <input asp-for="Title" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter course title" />
                         <span asp-validation-for="Title" class="text-red-400 text-sm"></span>
                     </div>
                     
-                    <div class="space-y-2">
-                        <label asp-for="Instructor" class="block text-sm font-medium text-gray-300">Instructor</label>
+                    <div>
+                        <label asp-for="Instructor" class="block text-sm font-medium text-gray-300 mb-2">Instructor</label>
                         <input asp-for="Instructor" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter instructor name" />
                         <span asp-validation-for="Instructor" class="text-red-400 text-sm"></span>
                     </div>
                 </div>
-
-                <div class="space-y-2">
-                    <label asp-for="Description" class="block text-sm font-medium text-gray-300">Description</label>
-                    <textarea asp-for="Description" rows="4" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter course description"></textarea>
+                
+                <div class="mt-6">
+                    <label asp-for="Description" class="block text-sm font-medium text-gray-300 mb-2">Course Description</label>
+                    <textarea asp-for="Description" rows="4" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Describe your course..."></textarea>
                     <span asp-validation-for="Description" class="text-red-400 text-sm"></span>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="space-y-2">
-                        <label asp-for="Duration" class="block text-sm font-medium text-gray-300">Duration (hours)</label>
-                        <input asp-for="Duration" type="number" min="0" step="0.5" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="0" />
-                        <span asp-validation-for="Duration" class="text-red-400 text-sm"></span>
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label asp-for="Level" class="block text-sm font-medium text-gray-300">Level</label>
-                        <select asp-for="Level" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                            <option value="">Select Level</option>
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Advanced">Advanced</option>
+            <!-- Content Type Selection -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Content Type</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label asp-for="ContentType" class="block text-sm font-medium text-gray-300 mb-2">Content Type</label>
+                        <select asp-for="ContentType" asp-items="ViewBag.ContentTypes" id="contentTypeSelect" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="">Select Content Type</option>
                         </select>
-                        <span asp-validation-for="Level" class="text-red-400 text-sm"></span>
+                        <span asp-validation-for="ContentType" class="text-red-400 text-sm"></span>
                     </div>
                     
-                    <div class="space-y-2">
-                        <label asp-for="Price" class="block text-sm font-medium text-gray-300">Price</label>
-                        <input asp-for="Price" type="number" min="0" step="0.01" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="0.00" />
-                        <span asp-validation-for="Price" class="text-red-400 text-sm"></span>
-                    </div>
-                </div>
-
-                <!-- Content Type Selection -->
-                <div class="space-y-2">
-                    <label asp-for="ContentType" class="block text-sm font-medium text-gray-300">Content Type</label>
-                    <select asp-for="ContentType" asp-items="ViewBag.ContentTypes" id="contentTypeSelect" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                        <option value="">Select Content Type</option>
-                    </select>
-                    <span asp-validation-for="ContentType" class="text-red-400 text-sm"></span>
-                </div>
-
-                <!-- Dynamic Content Fields -->
-                <div id="contentFields" class="space-y-6">
-                    <!-- Text Content -->
-                    <div id="textContent" class="content-field hidden">
-                        <div class="space-y-2">
-                            <label asp-for="Content" class="block text-sm font-medium text-gray-300">Course Content (Markdown)</label>
-                            <textarea asp-for="Content" rows="10" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono text-sm" placeholder="# Course Content
-
-Enter your course content in Markdown format.
+                    <!-- Content Type Fields -->
+                    <div id="contentFields" class="space-y-6">
+                        <!-- Text Content -->
+                        <div id="textContent" class="content-field hidden">
+                            <div class="space-y-2">
+                                <label asp-for="Content" class="block text-sm font-medium text-gray-300">Course Content (Markdown)</label>
+                                <textarea asp-for="Content" rows="8" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter your course content in Markdown format.
 
 ## Section 1
 Your content here...
 
 ## Section 2
 More content..."></textarea>
-                            <span asp-validation-for="Content" class="text-red-400 text-sm"></span>
-                            <p class="text-sm text-gray-400">Use Markdown formatting for rich text content</p>
-                        </div>
-                    </div>
-
-                    <!-- Video Content -->
-                    <div id="videoContent" class="content-field hidden">
-                        <div class="space-y-2">
-                            <label asp-for="VideoUrl" class="block text-sm font-medium text-gray-300">YouTube Video URL</label>
-                            <input asp-for="VideoUrl" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://www.youtube.com/watch?v=..." />
-                            <span asp-validation-for="VideoUrl" class="text-red-400 text-sm"></span>
-                            <p class="text-sm text-gray-400">Enter a YouTube video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)</p>
-                        </div>
-                    </div>
-
-                    <!-- PDF Content -->
-                    <div id="pdfContent" class="content-field hidden">
-                        <div class="space-y-2">
-                            <label for="pdfFile" class="block text-sm font-medium text-gray-300">PDF File</label>
-                            <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-                            <span asp-validation-for="PdfFilePath" class="text-red-400 text-sm"></span>
-                            <p class="text-sm text-gray-400">Upload a PDF file for the course materials</p>
-                        </div>
-                    </div>
-
-                    <!-- Quiz Content -->
-                    <div id="quizContent" class="content-field hidden">
-                        <div class="space-y-4">
-                            <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-                                <div class="flex items-center space-x-2 mb-2">
-                                    <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    <span class="text-yellow-400 font-medium">Quiz Course</span>
-                                </div>
-                                <p class="text-yellow-300 text-sm">
-                                    This will create a course with quiz content. After creating the course, you can add topics and quiz content items.
-                                </p>
+                                <span asp-validation-for="Content" class="text-red-400 text-sm"></span>
+                                <p class="text-sm text-gray-400">Use Markdown formatting for rich text content</p>
                             </div>
+                        </div>
+
+                        <!-- Video Content -->
+                        <div id="videoContent" class="content-field hidden">
                             <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-300">Quiz Course Setup</label>
-                                <p class="text-sm text-gray-400">
-                                    After creating this course, you'll be able to:
-                                </p>
-                                <ul class="text-sm text-gray-400 list-disc list-inside space-y-1">
-                                    <li>Add topics to the course</li>
-                                    <li>Create quiz content items within topics</li>
-                                    <li>Add multiple choice, true/false, short answer, and essay questions</li>
-                                    <li>Set time limits and passing scores</li>
-                                    <li>Track student progress and results</li>
-                                </ul>
+                                <label asp-for="VideoUrl" class="block text-sm font-medium text-gray-300">YouTube Video URL</label>
+                                <input asp-for="VideoUrl" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="https://www.youtube.com/watch?v=..." />
+                                <span asp-validation-for="VideoUrl" class="text-red-400 text-sm"></span>
+                                <p class="text-sm text-gray-400">Enter a YouTube video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)</p>
+                            </div>
+                        </div>
+
+                        <!-- PDF Content -->
+                        <div id="pdfContent" class="content-field hidden">
+                            <div class="space-y-2">
+                                <label for="pdfFile" class="block text-sm font-medium text-gray-300">PDF File</label>
+                                <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                                <span asp-validation-for="PdfFilePath" class="text-red-400 text-sm"></span>
+                                <p class="text-sm text-gray-400">Upload a PDF file for the course materials</p>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Content -->
+                        <div id="quizContent" class="content-field hidden">
+                            <div class="space-y-4">
+                                <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-yellow-400 font-medium">Quiz Course Setup</span>
+                                    </div>
+                                    <p class="text-yellow-300 text-sm">
+                                        Create a course with quiz content. You can add topics and quiz content items below.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Submit Button -->
-                <div class="pt-6 border-t border-white/10">
-                    <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
-                        Create Course
+            <!-- Quiz Course Topics Section -->
+            <div id="quizTopicsSection" class="bg-gray-800 rounded-lg p-6 hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-white">Course Topics & Quizzes</h2>
+                    <button type="button" id="addTopicBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Add Topic
                     </button>
                 </div>
-            </form>
-        </div>
+                
+                <div id="topicsContainer" class="space-y-6">
+                    <!-- Topics will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-6 border-t border-white/10">
+                <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
+                    Create Course
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+
+<!-- Topic Template -->
+<template id="topicTemplate">
+    <div class="topic-item bg-gray-700 rounded-lg p-6 border border-gray-600">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-medium text-white">Topic <span class="topic-number"></span></h3>
+            <button type="button" class="remove-topic-btn text-red-400 hover:text-red-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Topic Title</label>
+                <input type="text" name="Topics[INDEX].Title" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter topic title" required />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Order</label>
+                <input type="number" name="Topics[INDEX].Order" value="1" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Topic Description</label>
+            <textarea name="Topics[INDEX].Description" rows="3" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Describe this topic..."></textarea>
+        </div>
+        
+        <!-- Quiz Section -->
+        <div class="quiz-section border-t border-gray-600 pt-4">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-md font-medium text-white">Quiz for this Topic</h4>
+                <button type="button" class="toggle-quiz-btn px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                    Add Quiz
+                </button>
+            </div>
+            
+            <div class="quiz-content hidden space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Quiz Title</label>
+                        <input type="text" name="Topics[INDEX].Quiz.Title" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter quiz title" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Time Limit (minutes)</label>
+                        <input type="number" name="Topics[INDEX].Quiz.TimeLimitMinutes" value="30" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Passing Score (%)</label>
+                        <input type="number" name="Topics[INDEX].Quiz.PassingScore" value="70" min="1" max="100" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Max Attempts</label>
+                        <input type="number" name="Topics[INDEX].Quiz.MaxAttempts" value="3" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Quiz Description</label>
+                    <textarea name="Topics[INDEX].Quiz.Description" rows="3" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Describe this quiz..."></textarea>
+                </div>
+                
+                <!-- Questions Section -->
+                <div class="questions-section">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="text-sm font-medium text-white">Questions</h5>
+                        <button type="button" class="add-question-btn px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700">
+                            Add Question
+                        </button>
+                    </div>
+                    
+                    <div class="questions-container space-y-4">
+                        <!-- Questions will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Question Template -->
+<template id="questionTemplate">
+    <div class="question-item bg-gray-600 rounded-lg p-4 border border-gray-500">
+        <div class="flex items-center justify-between mb-3">
+            <h6 class="text-sm font-medium text-white">Question <span class="question-number"></span></h6>
+            <button type="button" class="remove-question-btn text-red-400 hover:text-red-300">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+            <div>
+                <label class="block text-xs font-medium text-gray-300 mb-1">Question Type</label>
+                <select name="Topics[TOPIC_INDEX].Quiz.Questions[QUESTION_INDEX].QuestionType" class="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <option value="0">Multiple Choice</option>
+                    <option value="1">True/False</option>
+                    <option value="2">Short Answer</option>
+                    <option value="3">Essay</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-300 mb-1">Points</label>
+                <input type="number" name="Topics[TOPIC_INDEX].Quiz.Questions[QUESTION_INDEX].Points" value="10" min="1" class="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-300 mb-1">Order</label>
+                <input type="number" name="Topics[TOPIC_INDEX].Quiz.Questions[QUESTION_INDEX].Order" value="1" min="1" class="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label class="block text-xs font-medium text-gray-300 mb-1">Question Text</label>
+            <textarea name="Topics[TOPIC_INDEX].Quiz.Questions[QUESTION_INDEX].QuestionText" rows="2" class="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter your question..." required></textarea>
+        </div>
+        
+        <!-- Options for Multiple Choice/True False -->
+        <div class="options-section hidden">
+            <div class="flex items-center justify-between mb-2">
+                <label class="block text-xs font-medium text-gray-300">Options</label>
+                <button type="button" class="add-option-btn px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
+                    Add Option
+                </button>
+            </div>
+            
+            <div class="options-container space-y-2">
+                <!-- Options will be added here -->
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Option Template -->
+<template id="optionTemplate">
+    <div class="option-item flex items-center space-x-2">
+        <input type="text" name="Topics[TOPIC_INDEX].Quiz.Questions[QUESTION_INDEX].Options[OPTION_INDEX].OptionText" class="flex-1 px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Option text" required />
+        <input type="checkbox" name="Topics[TOPIC_INDEX].Quiz.Questions[QUESTION_INDEX].Options[OPTION_INDEX].IsCorrect" class="w-4 h-4 text-indigo-600 bg-white/10 border-white/20 rounded focus:ring-indigo-500 focus:ring-2" />
+        <label class="text-xs text-gray-300">Correct</label>
+        <button type="button" class="remove-option-btn text-red-400 hover:text-red-300">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+        </button>
+    </div>
+</template>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const contentTypeSelect = document.getElementById('contentTypeSelect');
     const contentFields = document.querySelectorAll('.content-field');
+    const quizTopicsSection = document.getElementById('quizTopicsSection');
+    const addTopicBtn = document.getElementById('addTopicBtn');
+    const topicsContainer = document.getElementById('topicsContainer');
     
+    let topicIndex = 0;
+    let questionIndexes = {};
+    
+    // Content type change handler
     contentTypeSelect.addEventListener('change', function() {
         const selectedValue = this.value;
         
@@ -172,6 +304,9 @@ document.addEventListener('DOMContentLoaded', function() {
         contentFields.forEach(field => {
             field.classList.add('hidden');
         });
+        
+        // Hide quiz topics section by default
+        quizTopicsSection.classList.add('hidden');
         
         // Show the appropriate content field based on selection
         if (selectedValue === '0') { // Text
@@ -182,7 +317,141 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('videoContent').classList.remove('hidden');
         } else if (selectedValue === '3') { // Quiz
             document.getElementById('quizContent').classList.remove('hidden');
+            quizTopicsSection.classList.remove('hidden');
         }
     });
+    
+    // Add topic functionality
+    addTopicBtn.addEventListener('click', function() {
+        addTopic();
+    });
+    
+    function addTopic() {
+        const template = document.getElementById('topicTemplate');
+        const topicDiv = template.content.cloneNode(true);
+        
+        // Update indices
+        const topicItem = topicDiv.querySelector('.topic-item');
+        topicItem.querySelector('.topic-number').textContent = topicIndex + 1;
+        
+        // Update all input names with correct index
+        topicItem.querySelectorAll('input, textarea, select').forEach(input => {
+            input.name = input.name.replace('[INDEX]', `[${topicIndex}]`);
+        });
+        
+        // Add event listeners
+        const removeBtn = topicItem.querySelector('.remove-topic-btn');
+        const toggleQuizBtn = topicItem.querySelector('.toggle-quiz-btn');
+        const addQuestionBtn = topicItem.querySelector('.add-question-btn');
+        
+        removeBtn.addEventListener('click', function() {
+            topicItem.remove();
+            updateTopicNumbers();
+        });
+        
+        toggleQuizBtn.addEventListener('click', function() {
+            const quizContent = topicItem.querySelector('.quiz-content');
+            const btn = this;
+            
+            if (quizContent.classList.contains('hidden')) {
+                quizContent.classList.remove('hidden');
+                btn.textContent = 'Remove Quiz';
+                btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                btn.classList.add('bg-red-600', 'hover:bg-red-700');
+            } else {
+                quizContent.classList.add('hidden');
+                btn.textContent = 'Add Quiz';
+                btn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            }
+        });
+        
+        addQuestionBtn.addEventListener('click', function() {
+            addQuestion(topicItem, topicIndex);
+        });
+        
+        topicsContainer.appendChild(topicDiv);
+        topicIndex++;
+        questionIndexes[topicIndex - 1] = 0;
+    }
+    
+    function addQuestion(topicItem, topicIdx) {
+        const template = document.getElementById('questionTemplate');
+        const questionDiv = template.content.cloneNode(true);
+        
+        const questionItem = questionDiv.querySelector('.question-item');
+        const questionNumber = questionIndexes[topicIdx] + 1;
+        questionItem.querySelector('.question-number').textContent = questionNumber;
+        
+        // Update all input names with correct indices
+        questionItem.querySelectorAll('input, textarea, select').forEach(input => {
+            input.name = input.name.replace('[TOPIC_INDEX]', `[${topicIdx}]`);
+            input.name = input.name.replace('[QUESTION_INDEX]', `[${questionIndexes[topicIdx]}]`);
+        });
+        
+        // Add event listeners
+        const removeBtn = questionItem.querySelector('.remove-question-btn');
+        const questionTypeSelect = questionItem.querySelector('select[name*="QuestionType"]');
+        const addOptionBtn = questionItem.querySelector('.add-option-btn');
+        
+        removeBtn.addEventListener('click', function() {
+            questionItem.remove();
+            updateQuestionNumbers(topicItem);
+        });
+        
+        questionTypeSelect.addEventListener('change', function() {
+            const optionsSection = questionItem.querySelector('.options-section');
+            if (this.value === '0' || this.value === '1') { // Multiple Choice or True/False
+                optionsSection.classList.remove('hidden');
+            } else {
+                optionsSection.classList.add('hidden');
+            }
+        });
+        
+        addOptionBtn.addEventListener('click', function() {
+            addOption(questionItem, topicIdx, questionIndexes[topicIdx]);
+        });
+        
+        const questionsContainer = topicItem.querySelector('.questions-container');
+        questionsContainer.appendChild(questionDiv);
+        questionIndexes[topicIdx]++;
+    }
+    
+    function addOption(questionItem, topicIdx, questionIdx) {
+        const template = document.getElementById('optionTemplate');
+        const optionDiv = template.content.cloneNode(true);
+        
+        const optionItem = optionDiv.querySelector('.option-item');
+        
+        // Update all input names with correct indices
+        optionItem.querySelectorAll('input').forEach(input => {
+            input.name = input.name.replace('[TOPIC_INDEX]', `[${topicIdx}]`);
+            input.name = input.name.replace('[QUESTION_INDEX]', `[${questionIdx}]`);
+            input.name = input.name.replace('[OPTION_INDEX]', `[${questionItem.querySelectorAll('.option-item').length}]`);
+        });
+        
+        // Add event listener
+        const removeBtn = optionItem.querySelector('.remove-option-btn');
+        removeBtn.addEventListener('click', function() {
+            optionItem.remove();
+        });
+        
+        const optionsContainer = questionItem.querySelector('.options-container');
+        optionsContainer.appendChild(optionDiv);
+    }
+    
+    function updateTopicNumbers() {
+        const topics = topicsContainer.querySelectorAll('.topic-item');
+        topics.forEach((topic, index) => {
+            topic.querySelector('.topic-number').textContent = index + 1;
+        });
+    }
+    
+    function updateQuestionNumbers(topicItem) {
+        const questions = topicItem.querySelectorAll('.question-item');
+        questions.forEach((question, index) => {
+            question.querySelector('.question-number').textContent = index + 1;
+        });
+    }
 });
 </script> 

@@ -60,8 +60,8 @@ public class DashboardController : Controller
             .ToListAsync();
 
         // Check user roles and role requests
-        var isAdmin = await _userManager.IsInRoleAsync(user!, "Admin");
-        var isInstructor = await _userManager.IsInRoleAsync(user!, "Instructor");
+        var isAdmin = user != null && await _userManager.IsInRoleAsync(user, "Admin");
+        var isInstructor = user != null && await _userManager.IsInRoleAsync(user, "Instructor");
         
         // Get current user's role request
         var currentRoleRequest = await _context.RoleRequests
@@ -147,7 +147,7 @@ public class DashboardController : Controller
         
         // Check if user is already an instructor
         var user = await _userManager.FindByIdAsync(userId);
-        if (await _userManager.IsInRoleAsync(user!, "Instructor"))
+        if (user != null && await _userManager.IsInRoleAsync(user, "Instructor"))
         {
             TempData["ErrorMessage"] = "You are already an instructor.";
             return RedirectToAction(nameof(Index));

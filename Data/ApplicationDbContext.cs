@@ -22,4 +22,7 @@ public class ApplicationDbContext : IdentityDbContext
     // Add these new DbSets for the Topic and ContentItem tables
     public DbSet<Topic> Topics { get; set; }
     public DbSet<ContentItem> ContentItems { get; set; }
+    
+    // Add DbSet for CourseRating
+    public DbSet<CourseRating> CourseRatings { get; set; }
 }

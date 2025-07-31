@@ -56,4 +56,9 @@ public class Course
     // Navigation properties for relationships
     public List<Progress> Progresses { get; set; } = new List<Progress>();
     public List<Topic> Topics { get; set; } = new List<Topic>();
+    public List<CourseRating> Ratings { get; set; } = new List<CourseRating>();
+    
+    // Computed properties for ratings
+    public double AverageRating => Ratings.Any() ? Ratings.Average(r => r.Rating) : 0;
+    public int TotalRatings => Ratings.Count;
 }

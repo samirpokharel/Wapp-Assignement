@@ -1,0 +1,25 @@
+# Development Dockerfile with hot reload support
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+# Set working directory
+WORKDIR /app
+
+# Copy project files
+COPY ["SimpleLMS.csproj", "./"]
+RUN dotnet restore "SimpleLMS.csproj"
+
+# Copy all source code
+COPY . .
+
+# Create directory for uploads
+RUN mkdir -p /app/wwwroot/uploads/pdfs
+
+# Set environment variables
+ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_ENVIRONMENT=Development
+
+# Expose port
+EXPOSE 5000
+
+# Set entry point for development with watch
+ENTRYPOINT ["dotnet", "watch", "run", "--urls", "http://+:5000"] 

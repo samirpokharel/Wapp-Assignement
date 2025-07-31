@@ -45,6 +45,7 @@ public class CoursesController : Controller
         var course = await _context.Courses
             .Include(c => c.Topics.OrderBy(t => t.Order))
                 .ThenInclude(t => t.ContentItems.OrderBy(ci => ci.Order))
+            .Include(c => c.Ratings.OrderByDescending(r => r.CreatedAt))
             .FirstOrDefaultAsync(m => m.Id == id);
             
         if (course == null)
@@ -55,13 +56,18 @@ public class CoursesController : Controller
         // Check if user is enrolled
         var userId = _userManager.GetUserId(User);
         var isEnrolled = false;
+        var userRating = (CourseRating?)null;
         if (!string.IsNullOrEmpty(userId))
         {
             isEnrolled = await _context.Enrollments
                 .AnyAsync(e => e.UserId == userId && e.CourseId == course.Id);
+            
+            userRating = await _context.CourseRatings
+                .FirstOrDefaultAsync(r => r.UserId == userId && r.CourseId == course.Id);
         }
 
         ViewBag.IsEnrolled = isEnrolled;
+        ViewBag.UserRating = userRating;
         return View(course);
     }
 
@@ -269,6 +275,131 @@ public class CoursesController : Controller
     private bool CourseExists(int id)
     {
         return _context.Courses.Any(e => e.Id == id);
+    }
+
+    // GET: Courses/Rate/5
+    public async Task<IActionResult> Rate(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var userId = _userManager.GetUserId(User);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
+        }
+
+        var course = await _context.Courses.FindAsync(id);
+        if (course == null)
+        {
+            return NotFound();
+        }
+
+        // Check if user has already rated this course
+        var existingRating = await _context.CourseRatings
+            .FirstOrDefaultAsync(r => r.UserId == userId && r.CourseId == id);
+
+        if (existingRating != null)
+        {
+            // User has already rated, redirect to edit
+            return RedirectToAction(nameof(EditRating), new { id });
+        }
+
+        ViewBag.Course = course;
+        return View();
+    }
+
+    // POST: Courses/Rate/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Rate(int id, [Bind("Rating,Feedback")] CourseRating courseRating)
+    {
+        var userId = _userManager.GetUserId(User);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
+        }
+
+        if (ModelState.IsValid)
+        {
+            courseRating.UserId = userId;
+            courseRating.CourseId = id;
+            courseRating.CreatedAt = DateTime.UtcNow;
+
+            _context.CourseRatings.Add(courseRating);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Thank you for your rating and feedback!";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var course = await _context.Courses.FindAsync(id);
+        ViewBag.Course = course;
+        return View(courseRating);
+    }
+
+    // GET: Courses/EditRating/5
+    public async Task<IActionResult> EditRating(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var userId = _userManager.GetUserId(User);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
+        }
+
+        var rating = await _context.CourseRatings
+            .FirstOrDefaultAsync(r => r.UserId == userId && r.CourseId == id);
+
+        if (rating == null)
+        {
+            return RedirectToAction(nameof(Rate), new { id });
+        }
+
+        var course = await _context.Courses.FindAsync(id);
+        ViewBag.Course = course;
+        return View(rating);
+    }
+
+    // POST: Courses/EditRating/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditRating(int id, [Bind("Id,Rating,Feedback")] CourseRating courseRating)
+    {
+        var userId = _userManager.GetUserId(User);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return RedirectToAction("Login", "Account", new { area = "Identity" });
+        }
+
+        var existingRating = await _context.CourseRatings
+            .FirstOrDefaultAsync(r => r.UserId == userId && r.CourseId == id);
+
+        if (existingRating == null)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            existingRating.Rating = courseRating.Rating;
+            existingRating.Feedback = courseRating.Feedback;
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Your rating has been updated successfully!";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var course = await _context.Courses.FindAsync(id);
+        ViewBag.Course = course;
+        return View(courseRating);
     }
 
     private async Task SeedSampleCourses()

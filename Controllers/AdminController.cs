@@ -115,6 +115,13 @@ public class AdminController : Controller
                 }
             }
 
+            // Handle Quiz content type
+            if (course.ContentType == ContentType.Quiz)
+            {
+                // For quiz courses, set a default content
+                course.Content = "Quiz course - content will be added through topics and content items.";
+            }
+
             course.CreatedAt = DateTime.UtcNow;
             course.IsActive = true;
             

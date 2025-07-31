@@ -32,12 +32,20 @@ public class ContentItemController : Controller
         ViewBag.TopicId = topicId;
         ViewBag.TopicTitle = topic.Title;
         ViewBag.CourseTitle = topic.Course.Title;
-        ViewBag.ContentTypes = new SelectList(Enum.GetValues(typeof(ContentType))
+        
+        var contentTypes = Enum.GetValues(typeof(ContentType))
             .Cast<ContentType>()
-            .Select(ct => new { Value = (int)ct, Text = ct.ToString() }), "Value", "Text");
+            .Select(ct => new { Value = (int)ct, Text = ct.ToString() })
+            .ToList();
+            
+        ViewBag.ContentTypes = new SelectList(contentTypes, "Value", "Text");
+        
+
             
         return View();
     }
+    
+
 
     // POST: ContentItem/Create
     [HttpPost]
@@ -88,11 +96,26 @@ public class ContentItemController : Controller
                 }
             }
 
+            // Handle Quiz content type
+            if (contentItem.ContentType == ContentType.Quiz)
+            {
+                // For quiz content, we don't need any special handling here
+                // The quiz will be created separately after the content item is created
+                contentItem.Content = "Quiz content - questions will be added separately.";
+            }
+
             contentItem.CreatedAt = DateTime.UtcNow;
             contentItem.IsActive = true;
             
             _context.Add(contentItem);
             await _context.SaveChangesAsync();
+            
+            // If it's a quiz content item, redirect to quiz creation
+            if (contentItem.ContentType == ContentType.Quiz)
+            {
+                TempData["SuccessMessage"] = "Quiz content item created successfully! Now let's set up the quiz.";
+                return RedirectToAction("Create", "Quiz", new { contentItemId = contentItem.Id });
+            }
             
             var topic = await _context.Topics.FindAsync(topicId);
             return RedirectToAction("Details", "Courses", new { id = topic!.CourseId });
@@ -263,6 +286,9 @@ public class ContentItemController : Controller
         var contentItem = await _context.ContentItems
             .Include(c => c.Topic)
             .ThenInclude(t => t.Course)
+            .Include(c => c.Quiz)
+            .ThenInclude(q => q.Questions)
+            .ThenInclude(qq => qq.Options)
             .FirstOrDefaultAsync(c => c.Id == id);
             
         if (contentItem == null)

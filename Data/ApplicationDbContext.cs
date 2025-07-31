@@ -24,10 +24,16 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Topic> Topics { get; set; }
     public DbSet<ContentItem> ContentItems { get; set; }
     
-<<<<<<< HEAD
     // Add DbSet for CourseRating
     public DbSet<CourseRating> CourseRatings { get; set; }
-=======
+    
+    // Add DbSets for Quiz system
+    public DbSet<Quiz> Quizzes { get; set; }
+    public DbSet<QuizQuestion> QuizQuestions { get; set; }
+    public DbSet<QuizQuestionOption> QuizQuestionOptions { get; set; }
+    public DbSet<QuizAttempt> QuizAttempts { get; set; }
+    public DbSet<QuizAttemptAnswer> QuizAttemptAnswers { get; set; }
+    
     // Add DbSet for RoleRequest table
     public DbSet<RoleRequest> RoleRequests { get; set; }
     
@@ -40,5 +46,4 @@ public class ApplicationDbContext : IdentityDbContext
             .Property<string>("Role")
             .HasMaxLength(50);
     }
->>>>>>> 49961514b6f104f2957adc265c53fa20200d2a5c
 }

@@ -45,6 +45,7 @@ public class CoursesController : Controller
         var course = await _context.Courses
             .Include(c => c.Topics.OrderBy(t => t.Order))
                 .ThenInclude(t => t.ContentItems.OrderBy(ci => ci.Order))
+                    .ThenInclude(ci => ci.Quiz)
             .Include(c => c.Ratings.OrderByDescending(r => r.CreatedAt))
             .FirstOrDefaultAsync(m => m.Id == id);
             

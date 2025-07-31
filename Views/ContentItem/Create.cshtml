@@ -52,6 +52,7 @@
                         <option value="">Select Content Type</option>
                     </select>
                     <span asp-validation-for="ContentType" class="text-red-400 text-sm"></span>
+
                 </div>
 
                 <!-- Dynamic Content Fields -->
@@ -93,6 +94,36 @@ More content..."></textarea>
                             <p class="text-sm text-gray-400">Upload a PDF file for the content</p>
                         </div>
                     </div>
+
+                    <!-- Quiz Content -->
+                    <div id="quizContent" class="content-field hidden">
+                        <div class="space-y-4">
+                            <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="text-yellow-400 font-medium">Quiz Content</span>
+                                </div>
+                                <p class="text-yellow-300 text-sm">
+                                    This will create a quiz content item. After creating the content item, you can add questions and configure the quiz settings.
+                                </p>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-300">Quiz Setup</label>
+                                <p class="text-sm text-gray-400">
+                                    After creating this content item, you'll be able to:
+                                </p>
+                                <ul class="text-sm text-gray-400 list-disc list-inside space-y-1">
+                                    <li>Add multiple choice, true/false, short answer, and essay questions</li>
+                                    <li>Set time limits and passing scores</li>
+                                    <li>Configure maximum attempts</li>
+                                    <li>Track student progress and results</li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -111,6 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const contentTypeSelect = document.getElementById('contentTypeSelect');
     const contentFields = document.querySelectorAll('.content-field');
     
+
+    
     contentTypeSelect.addEventListener('change', function() {
         const selectedValue = this.value;
         
@@ -126,6 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('pdfContent').classList.remove('hidden');
         } else if (selectedValue === '2') { // Video
             document.getElementById('videoContent').classList.remove('hidden');
+        } else if (selectedValue === '3') { // Quiz
+            document.getElementById('quizContent').classList.remove('hidden');
         }
     });
 });

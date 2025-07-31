@@ -39,4 +39,5 @@ public class ContentItem
     // Navigation properties
     public Topic Topic { get; set; } = null!;
     public List<Progress> Progresses { get; set; } = new List<Progress>();
+    public Quiz? Quiz { get; set; } // Navigation property for quiz content
 } 

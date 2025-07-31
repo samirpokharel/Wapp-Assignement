@@ -1,0 +1,139 @@
+@model SimpleLMS.Models.Quiz
+
+@{
+    ViewData["Title"] = "Create Quiz";
+    var contentItem = ViewBag.ContentItem as SimpleLMS.Models.ContentItem;
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Create Quiz</h1>
+                        <p class="text-gray-600 dark:text-gray-400 mt-2">Create a new quiz for your course content</p>
+                    </div>
+                    <a asp-controller="ContentItem" asp-action="Details" asp-route-id="@contentItem?.Id" 
+                       class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back to Content
+                    </a>
+                </div>
+            </div>
+
+            <!-- Content Item Info -->
+            @if (contentItem != null)
+            {
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Content Item</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Title</p>
+                            <p class="text-gray-900 dark:text-white font-medium">@contentItem.Title</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Course</p>
+                            <p class="text-gray-900 dark:text-white font-medium">@contentItem.Topic.Course.Title</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Topic</p>
+                            <p class="text-gray-900 dark:text-white font-medium">@contentItem.Topic.Title</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Content Type</p>
+                            <p class="text-gray-900 dark:text-white font-medium">@contentItem.ContentType</p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Quiz Form -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Quiz Details</h2>
+                </div>
+                
+                <form asp-action="Create" method="post" class="p-6 space-y-6">
+                    <div asp-validation-summary="ModelOnly" class="text-red-600 dark:text-red-400 mb-4"></div>
+                    
+                    <input type="hidden" asp-for="ContentItemId" value="@contentItem?.Id" />
+                    
+                    <!-- Title -->
+                    <div>
+                        <label asp-for="Title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Quiz Title *
+                        </label>
+                        <input asp-for="Title" type="text" 
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                               placeholder="Enter quiz title">
+                        <span asp-validation-for="Title" class="text-red-600 dark:text-red-400 text-sm"></span>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label asp-for="Description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Description
+                        </label>
+                        <textarea asp-for="Description" rows="4"
+                                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                  placeholder="Enter quiz description"></textarea>
+                        <span asp-validation-for="Description" class="text-red-600 dark:text-red-400 text-sm"></span>
+                    </div>
+
+                    <!-- Quiz Settings -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Time Limit -->
+                        <div>
+                            <label asp-for="TimeLimitMinutes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Time Limit (minutes)
+                            </label>
+                            <input asp-for="TimeLimitMinutes" type="number" min="1" max="180"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <span asp-validation-for="TimeLimitMinutes" class="text-red-600 dark:text-red-400 text-sm"></span>
+                        </div>
+
+                        <!-- Passing Score -->
+                        <div>
+                            <label asp-for="PassingScore" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Passing Score (%)
+                            </label>
+                            <input asp-for="PassingScore" type="number" min="1" max="100"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <span asp-validation-for="PassingScore" class="text-red-600 dark:text-red-400 text-sm"></span>
+                        </div>
+
+                        <!-- Max Attempts -->
+                        <div>
+                            <label asp-for="MaxAttempts" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Max Attempts
+                            </label>
+                            <input asp-for="MaxAttempts" type="number" min="1" max="10"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            <span asp-validation-for="MaxAttempts" class="text-red-600 dark:text-red-400 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <a asp-controller="ContentItem" asp-action="Details" asp-route-id="@contentItem?.Id"
+                           class="px-6 py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                            Cancel
+                        </a>
+                        <button type="submit" 
+                                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors">
+                            Create Quiz
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

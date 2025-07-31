@@ -26,108 +26,180 @@
             </div>
         </div>
 
-        <!-- Course Content -->
-        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-            @if (Model.ContentType == SimpleLMS.Models.ContentType.Text)
-            {
-                <!-- Text Content -->
-                <div class="prose prose-invert max-w-none">
-                    <h2 class="text-2xl font-bold text-white mb-6">Course Content</h2>
-                    <div class="text-gray-300 leading-relaxed">
-                        @Html.Raw(Markdig.Markdown.ToHtml(Model.Content ?? "No content available."))
-                    </div>
-                </div>
-            }
-            else if (Model.ContentType == SimpleLMS.Models.ContentType.Video)
-            {
-                <!-- Video Content -->
-                <div>
-                    <h2 class="text-2xl font-bold text-white mb-6">Video Lesson</h2>
-                    @if (!string.IsNullOrEmpty(Model.VideoUrl))
+        <!-- Course Topics and Content -->
+        @if (Model.Topics.Any())
+        {
+            <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 mb-8">
+                <h2 class="text-2xl font-bold text-white mb-6">Course Topics</h2>
+                
+                <div class="space-y-6">
+                    @foreach (var topic in Model.Topics)
                     {
-                        <div class="relative w-full" style="padding-bottom: 56.25%;">
-                            <iframe class="absolute top-0 left-0 w-full h-full rounded-lg"
-                                    src="@Model.VideoUrl"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-                            </iframe>
-                        </div>
-                        <div class="mt-6">
-                            <h3 class="text-lg font-semibold text-white mb-2">Video Description</h3>
-                            <p class="text-gray-300">@Model.Description</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-12">
-                            <div class="w-16 h-16 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                </svg>
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-indigo-500/30 transition-all duration-300">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-3 mb-2">
+                                        <span class="px-3 py-1 bg-indigo-500/20 text-indigo-400 text-sm font-medium rounded-full">
+                                            Topic @topic.Order
+                                        </span>
+                                    </div>
+                                    <h3 class="text-xl font-semibold text-white mb-2">@topic.Title</h3>
+                                    <p class="text-gray-300 text-sm">@topic.Description</p>
+                                </div>
                             </div>
-                            <h3 class="text-lg font-semibold text-white mb-2">No Video Available</h3>
-                            <p class="text-gray-400">This course doesn't have a video lesson yet.</p>
+                            
+                            <!-- Content Items -->
+                            @if (topic.ContentItems.Any())
+                            {
+                                <div class="space-y-3">
+                                    <h4 class="text-lg font-medium text-white mb-3">Content Items</h4>
+                                    @foreach (var contentItem in topic.ContentItems.OrderBy(c => c.Order))
+                                    {
+                                        <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center space-x-3 mb-2">
+                                                        <span class="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs font-medium rounded-full">
+                                                            @contentItem.ContentType
+                                                        </span>
+                                                        <span class="text-gray-400 text-xs">Item @contentItem.Order</span>
+                                                    </div>
+                                                    <h5 class="text-white font-medium mb-1">@contentItem.Title</h5>
+                                                    <p class="text-gray-400 text-sm">@contentItem.Description</p>
+                                                </div>
+                                                
+                                                <div class="flex space-x-2">
+                                                    <a asp-controller="ContentItem" asp-action="Learn" asp-route-id="@contentItem.Id" 
+                                                       class="px-3 py-2 bg-indigo-500/20 text-indigo-400 rounded-lg hover:bg-indigo-500/30 transition-colors duration-300 text-sm">
+                                                        Learn
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-6">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-gray-400 text-sm">No content items yet</p>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
-            }
-            else if (Model.ContentType == SimpleLMS.Models.ContentType.Pdf)
-            {
-                <!-- PDF Content -->
-                <div>
-                    <h2 class="text-2xl font-bold text-white mb-6">Course Materials</h2>
-                    @if (!string.IsNullOrEmpty(Model.PdfFilePath))
-                    {
-                        <div class="bg-white/5 rounded-lg p-6 border border-white/10">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center">
-                                    <svg class="w-8 h-8 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </div>
+        }
+        else
+        {
+            <!-- Fallback to original course content -->
+            <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+                @if (Model.ContentType == SimpleLMS.Models.ContentType.Text)
+                {
+                    <!-- Text Content -->
+                    <div class="prose prose-invert max-w-none">
+                        <h2 class="text-2xl font-bold text-white mb-6">Course Content</h2>
+                        <div class="text-gray-300 leading-relaxed">
+                            @Html.Raw(Markdig.Markdown.ToHtml(Model.Content ?? "No content available."))
+                        </div>
+                    </div>
+                }
+                else if (Model.ContentType == SimpleLMS.Models.ContentType.Video)
+                {
+                    <!-- Video Content -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-6">Video Lesson</h2>
+                        @if (!string.IsNullOrEmpty(Model.VideoUrl))
+                        {
+                            <div class="relative w-full" style="padding-bottom: 56.25%;">
+                                <iframe class="absolute top-0 left-0 w-full h-full rounded-lg"
+                                        src="@Model.VideoUrl"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen>
+                                </iframe>
+                            </div>
+                            <div class="mt-6">
+                                <h3 class="text-lg font-semibold text-white mb-2">Video Description</h3>
+                                <p class="text-gray-300">@Model.Description</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white mb-2">No Video Available</h3>
+                                <p class="text-gray-400">This course doesn't have a video lesson yet.</p>
+                            </div>
+                        }
+                    </div>
+                }
+                else if (Model.ContentType == SimpleLMS.Models.ContentType.Pdf)
+                {
+                    <!-- PDF Content -->
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-6">Course Materials</h2>
+                        @if (!string.IsNullOrEmpty(Model.PdfFilePath))
+                        {
+                            <div class="bg-white/5 rounded-lg p-6 border border-white/10">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <svg class="w-8 h-8 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-white">Course PDF</h3>
+                                            <p class="text-gray-400 text-sm">Download the course materials</p>
+                                        </div>
+                                    </div>
+                                    <a href="@Model.PdfFilePath" target="_blank" 
+                                       class="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors duration-300">
+                                        Download PDF
+                                    </a>
+                                </div>
+                                <div class="text-gray-300">
+                                    <p>@Model.Description</p>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                     </svg>
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-white">Course PDF</h3>
-                                        <p class="text-gray-400 text-sm">Download the course materials</p>
-                                    </div>
                                 </div>
-                                <a href="@Model.PdfFilePath" target="_blank" 
-                                   class="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors duration-300">
-                                    Download PDF
-                                </a>
+                                <h3 class="text-lg font-semibold text-white mb-2">No PDF Available</h3>
+                                <p class="text-gray-400">This course doesn't have PDF materials yet.</p>
                             </div>
-                            <div class="text-gray-300">
-                                <p>@Model.Description</p>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-12">
-                            <div class="w-16 h-16 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="text-lg font-semibold text-white mb-2">No PDF Available</h3>
-                            <p class="text-gray-400">This course doesn't have PDF materials yet.</p>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <!-- Default Content -->
-                <div class="text-center py-12">
-                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
+                        }
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">No Content Available</h3>
-                    <p class="text-gray-400">This course doesn't have any content yet.</p>
-                </div>
-            }
-        </div>
+                }
+                else
+                {
+                    <!-- Default Content -->
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">No Content Available</h3>
+                        <p class="text-gray-400">This course doesn't have any content yet.</p>
+                    </div>
+                }
+            </div>
+        }
 
         <!-- Course Completion -->
         <div class="mt-8 bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
